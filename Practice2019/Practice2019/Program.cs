@@ -31,23 +31,6 @@ namespace Practice02
          * 遊戲有需要一個獨一無二的資源管理器(GameMaster)，可快速、方便讓所成員函式查找目前遊戲狀態下資運，如怪物清單、玩家清單、關卡資訊等等
          * 使用目前為止所學，設計 GameMaster 類別，使其只能被配置一次、有方便的取得物件方法，未來以應用於上述情境
          */
-        class SingletonA
-        {
-            private static SingletonA instance = null;
-
-            public static SingletonA Instance
-            {
-                get
-                {
-                    return instance ?? new SingletonA();
-                }
-            }
-
-            private SingletonA()
-            {
-                instance = this;
-            }
-        }
         static bool doItAgain = true;
         static void Main(string[] args)
         {

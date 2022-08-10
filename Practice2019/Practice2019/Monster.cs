@@ -71,6 +71,7 @@ namespace Practice02
 
         public void GetWeek(double point)
         {
+            Console.WriteLine("怪物的皮變得脆弱");
             Ac -= point;
         }
 

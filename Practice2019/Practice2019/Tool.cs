@@ -26,7 +26,7 @@ namespace Practice02
         }
         public override void Effect(Player player)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("甚麼效果都沒發生...");
         }
 
         public override void Effect(Monster monster)
