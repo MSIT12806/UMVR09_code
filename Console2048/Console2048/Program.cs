@@ -10,7 +10,7 @@ namespace Console2048
     {
         static void Main(string[] args)
         {
-            GameBoard.ShowGameBoard();
+            GameBoard.GameStart();
         }
 
         /*
