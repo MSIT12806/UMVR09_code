@@ -35,6 +35,41 @@ namespace Console2048
         }
 
 
+        private static void Move()
+        {
+            var input = Console.ReadKey();
+            switch (input.Key)
+            {
+                case ConsoleKey.LeftArrow:
+                    OperatePerLine(ref board[0][0], ref board[0][1], ref board[0][2], ref board[0][3]);
+                    OperatePerLine(ref board[1][0], ref board[1][1], ref board[1][2], ref board[1][3]);
+                    OperatePerLine(ref board[2][0], ref board[2][1], ref board[2][2], ref board[2][3]);
+                    OperatePerLine(ref board[3][0], ref board[3][1], ref board[3][2], ref board[3][3]);
+                    break;
+                case ConsoleKey.UpArrow:
+                    OperatePerLine(ref board[0][0], ref board[1][0], ref board[2][0], ref board[3][0]);
+                    OperatePerLine(ref board[0][1], ref board[1][1], ref board[2][1], ref board[3][1]);
+                    OperatePerLine(ref board[0][2], ref board[1][2], ref board[2][2], ref board[3][2]);
+                    OperatePerLine(ref board[0][3], ref board[1][3], ref board[2][3], ref board[3][3]);
+                    break;
+                case ConsoleKey.RightArrow:
+                    OperatePerLine(ref board[0][3], ref board[0][2], ref board[0][1], ref board[0][0]);
+                    OperatePerLine(ref board[1][3], ref board[1][2], ref board[1][1], ref board[1][0]);
+                    OperatePerLine(ref board[2][3], ref board[2][2], ref board[2][1], ref board[2][0]);
+                    OperatePerLine(ref board[3][3], ref board[3][2], ref board[3][1], ref board[3][0]);
+                    break;
+                case ConsoleKey.DownArrow:
+                    OperatePerLine(ref board[3][0], ref board[2][0], ref board[1][0], ref board[0][0]);
+                    OperatePerLine(ref board[3][1], ref board[2][1], ref board[1][1], ref board[0][1]);
+                    OperatePerLine(ref board[3][2], ref board[2][2], ref board[1][2], ref board[0][2]);
+                    OperatePerLine(ref board[3][3], ref board[2][3], ref board[1][3], ref board[0][3]);
+                    break;
+                default:
+                    Console.WriteLine("無用的操作");
+                    break;
+            }
+        }
+
         /// <summary>
         /// 操作，每行更動的結果
         /// </summary>
@@ -61,22 +96,22 @@ namespace Console2048
                 one += three;
                 three = 0;
             }
-            else if (three==0 && one == four)
+            else if (three == 0 && one == four)
             {
                 one += four;
                 four = 0;
             }
-            if(two == three)
+            if (two == three)
             {
                 two += three;
                 three = 0;
             }
-            else if(three ==0 && two == four)
+            else if (three == 0 && two == four)
             {
                 two += four;
                 four = 0;
             }
-            if(three == four)
+            if (three == four)
             {
                 three += four;
                 four = 0;
@@ -85,9 +120,9 @@ namespace Console2048
             //#2 移動
             if (one == 0)
             {
-                if(two == 0)
+                if (two == 0)
                 {
-                    if(three == 0)
+                    if (three == 0)
                     {
                         one = four;
                         four = 0;
@@ -125,40 +160,7 @@ namespace Console2048
 
 
         }
-        private static void Move()
-        {
-            var input = Console.ReadKey();
-            switch (input.Key)
-            {
-                case ConsoleKey.LeftArrow:
-                    OperatePerLine(ref board[0][0], ref board[0][1], ref board[0][2], ref board[0][3]);
-                    OperatePerLine(ref board[1][0], ref board[1][1], ref board[1][2], ref board[1][3]);
-                    OperatePerLine(ref board[2][0], ref board[2][1], ref board[2][2], ref board[2][3]);
-                    OperatePerLine(ref board[3][0], ref board[3][1], ref board[3][2], ref board[3][3]);
-                    break;
-                case ConsoleKey.UpArrow:
-                    OperatePerLine(ref board[0][0], ref board[1][0], ref board[2][0], ref board[3][0]);
-                    OperatePerLine(ref board[0][1], ref board[1][1], ref board[2][1], ref board[3][1]);
-                    OperatePerLine(ref board[0][2], ref board[1][2], ref board[2][2], ref board[3][2]);
-                    OperatePerLine(ref board[0][3], ref board[1][3], ref board[2][3], ref board[3][3]);
-                    break;
-                case ConsoleKey.RightArrow:
-                    OperatePerLine(ref board[0][3], ref board[0][2], ref board[0][1], ref board[0][0]);
-                    OperatePerLine(ref board[1][3], ref board[1][2], ref board[1][1], ref board[1][0]);
-                    OperatePerLine(ref board[2][3], ref board[2][2], ref board[2][1], ref board[2][0]);
-                    OperatePerLine(ref board[3][3], ref board[3][2], ref board[3][1], ref board[3][0]);
-                    break;
-                case ConsoleKey.DownArrow:
-                    OperatePerLine(ref board[3][0], ref board[2][0], ref board[1][0], ref board[0][0]);
-                    OperatePerLine(ref board[3][1], ref board[2][1], ref board[1][1], ref board[0][1]);
-                    OperatePerLine(ref board[3][2], ref board[2][2], ref board[1][2], ref board[0][2]);
-                    OperatePerLine(ref board[3][3], ref board[2][3], ref board[1][3], ref board[0][3]);
-                    break;
-                default:
-                    Console.WriteLine("無用的操作");
-                    break;
-            }
-        }
+
         public static void CombineRight()
         {
             //board[0]
