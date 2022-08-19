@@ -18,6 +18,7 @@ namespace Console2048
 
         public static void GameStart()
         {
+            GenerateCube();
             while (true)
             {
                 Round();
@@ -30,7 +31,6 @@ namespace Console2048
         private static void Round()
         {
 
-            GenerateCube();
             GenerateCube();
         }
 

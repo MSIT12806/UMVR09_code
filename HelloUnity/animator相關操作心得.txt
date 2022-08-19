@@ -1,0 +1,4 @@
+animator相關操作心得：
+1. 動作要能循環
+   Empty -> state -> exit
+   transition into -> state -> transition outto 
