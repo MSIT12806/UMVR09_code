@@ -10,7 +10,8 @@ namespace CSharpFinalWork_TheKnight
     {
         static void Main(string[] args)
         {
-            Singalton<GameManager>.SingletonObj.Initialize();
+            var gm = Singalton<GameManager>.SingletonObj;
+
         }
     }
 }
