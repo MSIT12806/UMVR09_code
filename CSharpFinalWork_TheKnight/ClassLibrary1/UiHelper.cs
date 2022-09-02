@@ -61,15 +61,46 @@ namespace Console2048
                     break;
             }
         }
-
-        public static int SetMenu(int y, int x, int row)
+        static int oriX=-1;
+        static int oriY=-1;
+        static bool HasOriginValue
         {
-            Console.SetCursorPosition(x, y);        //设置光标位置
+            get
+            {
+                return (oriX >= 0 && oriY >= 0); //You are so smart!
+            }
+        }
+        static void LeaveOperation()
+        {
+            if (HasOriginValue)
+            {
+                SetCursorPosition(oriX, oriY);
+                Write("　");
+            }
+        }
+
+        public static int SetMenu(int y, int x, params string[] operations)
+        {
+            int row = operations.Length;
+            //write menu
+            SetCursorPosition(x, y);
+            foreach (string item in operations)
+            {
+                WriteLine($"　　{item.ToString()}");//預留給光標圖示的空白
+            }
+
+            //set cursor
+            SetCursorPosition(x, y);
+            oriX = x;
+            oriY = y;
+            Write("》");
+
+            //read client operate
             int oldtop = y;
             bool tag = true;
             do
             {
-                ConsoleKeyInfo info = Console.ReadKey();
+                ConsoleKeyInfo info = ReadKey(true); //bool: true to not display the pressed key; otherwise, false.
                 switch (info.Key)
                 {
                     case ConsoleKey.Enter:
@@ -78,42 +109,39 @@ namespace Console2048
                     case ConsoleKey.UpArrow:
                         if (y > oldtop && y <= oldtop + row - 1)
                         {
+                            LeaveOperation();
                             y -= 1;
-                            Console.Write("\b\b");
                             Console.SetCursorPosition(x, y);
-                            Console.Write("⊕");
+                            Console.Write("》");
                         }
                         else
                         {
-                            Console.Write("\b\b");
                             Console.SetCursorPosition(x, y);
-                            Console.Write("⊕");
                         }
                         break;
                     case ConsoleKey.DownArrow:
                         if (y >= oldtop && y < oldtop + row - 1)
                         {
+                            LeaveOperation();
                             y += 1;
-                            Console.Write("\b\b");
                             Console.SetCursorPosition(x, y);
-                            Console.Write("⊕");
-                            //Console.Write(top);
+                            Console.Write("》");
                         }
                         else
                         {
-                            Console.Write("\b\b");
                             Console.SetCursorPosition(x, y);
-                            Console.Write("⊕");
                         }
                         break;
                     default:
-                        Console.Write("\b\b");
                         Console.SetCursorPosition(x, y);
-                        Console.Write("⊕");
                         break;
                 }
+                oriX = x;
+                oriY = y;
             } while (tag);
-            return y + 1 - oldtop;
+
+            int selectedRowIndex = y - oldtop;
+            return selectedRowIndex;
         }
     }
 }
