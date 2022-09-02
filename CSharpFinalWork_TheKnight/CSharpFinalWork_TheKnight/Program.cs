@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace CSharpFinalWork_TheKnight
 {
-    enum Test
-    {
-        T1,T2, T3
-    }
     internal class Program
     {
         static void Main(string[] args)
