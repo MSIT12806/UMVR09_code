@@ -11,7 +11,7 @@ namespace CSharpFinalWork_TheKnight
         Player Player { get; set; }
         public GameManager()
         {
-            Player = new Player();
+            Player = SetPlayerState();
         }
         internal void GameStart()
         {
@@ -25,19 +25,29 @@ namespace CSharpFinalWork_TheKnight
             }
 
         }
-        internal void DistributeState()
+        internal Player SetPlayerState()
+        {
+            //產生一個Player 物件
+            var player = new Player();
+            //讓 Client 分配點數
+            DistributeState(player);
+            //依照點數產生相對應的裝備 & 技能
+            //回傳 Player 物件
+            return null;
+        }
+        private void DistributeState(Player player)
         {
             void SetPlayerProperty()
             {
-                Player.ShowDistribute();
-                Player.ShowState();
+                player.ShowDistribute();
+                player.ShowState();
                 int s = UiGenerate.RenderOutEnumMenu<Player.PlayerBasicProperty>();
                 Player.Distribute((Player.PlayerBasicProperty)s);
             }
 
             while (true)
             {
-                if (Player.Point < 10)
+                if (player.Point < 10)
                 { //可選擇直接開打
                     break;
                 }

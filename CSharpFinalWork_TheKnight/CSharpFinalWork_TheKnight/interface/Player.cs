@@ -9,7 +9,7 @@ namespace Console2048
     /// <summary>
     /// 回傳：攻擊力加成 & 減傷效果 & 作用回合數
     /// </summary>
-    delegate Tuple<int, int, int> ReleaseSkill();
+    delegate (int agressiveBonusPercent, int damageDecreasePoint, int round)ReleaseSkill();
     internal class Player
     {
         int _power;
@@ -34,6 +34,8 @@ namespace Console2048
         public int Speed { private set; get; }
         public AbstractSword Sword { private set; get; }
         public AbstractShield Shield { private set; get; }
+
+        public Dictionary<string, ReleaseSkill> Skills = new Dictionary<string, ReleaseSkill>();
         public ReleaseSkill nowSkill { private set; get; }
         public int Move()
         {
@@ -71,20 +73,39 @@ namespace Console2048
             else if (ShieldPoint > 0)
                 Sword = new NormalSword();
             else
-                Sword = new NoSword();
-            //set skill when sword and shield combine.
-            Sword.AppendSkillsByShield(Shield);
+                Sword = new NoSword(this);
 
-            //set skill when property arrived.
+            this.GetSkills();
+
+
+        }
+
+        private void GetSkills()
+        {
+            foreach (var item in Shield.GetSkills())
+            {
+                if (!Skills.ContainsKey(item.Key))
+                    Skills.Add(item.Key, item.Value);
+                else
+                    throw new Exception("技能名稱出現重複");
+            }
+            foreach (var item in Sword.GetSkills())
+            {
+                if (!Skills.ContainsKey(item.Key))
+                    Skills.Add(item.Key, item.Value);
+                else
+                    throw new Exception("技能名稱出現重複");
+            }            //set skill when property arrived.
             if (this.Power >= 35)
             {
-                Sword.AppendPlayerSkill("爆裂砍擊", () => Tuple.Create(2, 0, 1));
+                Skills.Add("爆裂砍擊", () => (2, 0, 1));
             }
             else if (this.Agile >= 35)
             {
-                Sword.AppendPlayerSkill("暗隱伏擊", () => Tuple.Create(3, 0, 1));
+                Skills.Add("暗隱伏擊", () => (3, 0, 1));
             }
         }
+
         public enum PlayerBasicProperty
         {
             Power,
