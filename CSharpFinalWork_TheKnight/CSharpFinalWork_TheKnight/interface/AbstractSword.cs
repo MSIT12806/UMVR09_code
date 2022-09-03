@@ -26,8 +26,10 @@ namespace Console2048
             return new Dictionary<string, ReleaseSkill>(Skills);
         }
 
-        public abstract ReleaseSkill ReleaseSkill(string skill);
-        protected abstract IEnumerable<string> AppendSkillsByShield();
+        protected virtual IEnumerable<string> AppendSkillsByShield()
+        {
+            return Skills.Keys;
+        }
     }
     internal class NoSword : AbstractSword
     {
@@ -49,47 +51,61 @@ namespace Console2048
 
             return Skills.Keys;
         }
-
-        public override ReleaseSkill ReleaseSkill(string skill)
-        {
-            return Skills[skill];
-        }
         /// <summary>
         /// 徒手毆打
         /// </summary>
-        internal (int, int, int) HitByHand()
+        internal (float, int, int) HitByHand()
         {
             return (1, 0, 1);
         }
         /// <summary>
         /// 堅若磐石
         /// </summary>
-        internal Tuple<int, int, int> SameAsRock()
+        internal (float, int, int) SameAsRock()
         {
-            return Tuple.Create(0, 50, 1);
+            return (0, 50, 1);
         }
         /// <summary>
         /// 重如泰山：持續五回合，每次傷害減免。
         /// </summary>
-        internal Tuple<int, int, int> HeavyAsMountain()
+        internal (float, int, int) HeavyAsMountain()
         {
-            return Tuple.Create(0, 10, 5);
+            return (0, 10, 5);
         }
     }
     internal class NormalSword : AbstractSword
     {
-
+        public NormalSword(Player player) : base(player)
+        {
+            AttackPoint = 15;
+            Skills = new Dictionary<string, ReleaseSkill>();
+            Skills.Add("普通砍擊", ()=> (1, 0, 1));
+        }
     }
     internal class GoodSword : AbstractSword
     {
-
+        public GoodSword(Player player) : base(player)
+        {
+            AttackPoint = 18;
+            Skills = new Dictionary<string, ReleaseSkill>();
+            Skills.Add("好的砍擊", () => (1.1f, 0, 1));
+        }
     }
     internal class NiceSword : AbstractSword
     {
-
+        public NiceSword(Player player) : base(player)
+        {
+            AttackPoint = 23;
+            Skills = new Dictionary<string, ReleaseSkill>();
+            Skills.Add("優良砍擊", () => (1.1f, 0, 1));
+        }
     }
     internal class TwoHandSword : AbstractSword
     {
-
+        public TwoHandSword(Player player) : base(player)
+        {
+            AttackPoint = 33;
+            Skills = new Dictionary<string, ReleaseSkill>();
+        }
     }
 }

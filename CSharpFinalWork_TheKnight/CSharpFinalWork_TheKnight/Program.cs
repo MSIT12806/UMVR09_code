@@ -27,9 +27,9 @@ namespace CSharpFinalWork_TheKnight
             while (again)
             {
                 var gm = Singalton<GameManager>.SingletonObj;
-                gm.GameStart();
-                gm.DistributeState();
-                again = gm.FightState();
+                gm.Start();
+                gm.SetPlayer();
+                again = gm.Fight();
             }
         }
 

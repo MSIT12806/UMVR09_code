@@ -9,7 +9,7 @@ namespace Console2048
     /// <summary>
     /// 回傳：攻擊力加成 & 減傷效果 & 作用回合數
     /// </summary>
-    delegate (int agressiveBonusPercent, int damageDecreasePoint, int round)ReleaseSkill();
+    delegate (float agressiveBonusPercent, int damageDecreasePoint, int round) ReleaseSkill();
     internal class Player
     {
         int _power;
@@ -37,15 +37,18 @@ namespace Console2048
 
         public Dictionary<string, ReleaseSkill> Skills = new Dictionary<string, ReleaseSkill>();
         public ReleaseSkill nowSkill { private set; get; }
-        public int Move()
+        public void Move()
         {
             //跳出選單讓玩家選擇技能(回傳陣列字串)
+            var skillsKeyArray = Skills.Keys.ToArray();
+            int skillIndex = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, skillsKeyArray);
+            nowSkill = Skills[skillsKeyArray[skillIndex]];
             //注入玩家選擇的技能，並回傳值。
 
 
 
         }
-        void SetFightProperty()
+        internal void SetFightProperty()
         {
             Hp = Power * 3 + Endurance * 5;
             Stamina = Endurance;
@@ -53,25 +56,25 @@ namespace Console2048
 
             //gen sword
             if (SwordPoint > 35 && ShieldPoint <= 0)
-                Shield = new SuperHeavyShield();
+                Shield = new SuperHeavyShield(this);
             else if (SwordPoint > 35)
-                Shield = new HeavyShield();
+                Shield = new HeavyShield(this);
             else if (SwordPoint > 20)
-                Shield = new NiceShield();
+                Shield = new NiceShield(this);
             else if (ShieldPoint > 0)
-                Shield = new NormalShield();
+                Shield = new NormalShield(this);
             else
-                Shield = new NoShield();
+                Shield = new NoShield(this);
 
             //gen shield
             if (ShieldPoint > 35 && SwordPoint <= 0)
-                Sword = new TwoHandSword();
+                Sword = new TwoHandSword(this);
             else if (ShieldPoint > 35)
-                Sword = new NiceSword();
+                Sword = new NiceSword(this);
             else if (ShieldPoint > 20)
-                Sword = new GoodSword();
+                Sword = new GoodSword(this);
             else if (ShieldPoint > 0)
-                Sword = new NormalSword();
+                Sword = new NormalSword(this);
             else
                 Sword = new NoSword(this);
 
@@ -167,7 +170,26 @@ namespace Console2048
                     break;
             }
         }
+        internal void DistributeProperty()
+        {
 
+            while (true)
+            {
+
+                if (Point < 10)
+                {
+                    ShowState();
+                    UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否進入戰鬥？");
+                    if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 0)
+                        return;
+                }
+                ShowDistribute();
+                int s = UiGenerate.RenderOutEnumMenu<Player.PlayerBasicProperty>();
+                Distribute((Player.PlayerBasicProperty)s);
+
+            }
+
+        }
         private bool DecreacePointWhenPropertyAdd(int val)
         {
             if (val > Point)

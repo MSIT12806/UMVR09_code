@@ -31,6 +31,10 @@ namespace Console2048
     }
     internal class SuperHeavyShield : AbstractShield
     {
+        public SuperHeavyShield(Player player) : base(player)
+        {
+        }
+
         public override void Collide(int damage)
         {
             throw new NotImplementedException();
@@ -43,6 +47,10 @@ namespace Console2048
     }
     internal class HeavyShield : AbstractShield
     {
+        public HeavyShield(Player player) : base(player)
+        {
+        }
+
         public override void Collide(int damage)
         {
             throw new NotImplementedException();
@@ -55,6 +63,10 @@ namespace Console2048
     }
     internal class NiceShield : AbstractShield
     {
+        public NiceShield(Player player) : base(player)
+        {
+        }
+
         public override void Collide(int damage)
         {
             throw new NotImplementedException();
@@ -67,6 +79,10 @@ namespace Console2048
     }
     internal class NormalShield : AbstractShield
     {
+        public NormalShield(Player player) : base(player)
+        {
+        }
+
         public override void Collide(int damage)
         {
             throw new NotImplementedException();
@@ -79,14 +95,16 @@ namespace Console2048
     }
     internal class NoShield : AbstractShield
     {
+        public NoShield(Player player) : base(player)
+        {
+        }
+
         public override void Collide(int damage)
         {
-            throw new NotImplementedException();
         }
 
         public override void Defense(int damage)
         {
-            throw new NotImplementedException();
         }
     }
 }

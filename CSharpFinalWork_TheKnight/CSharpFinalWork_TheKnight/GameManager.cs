@@ -11,9 +11,8 @@ namespace CSharpFinalWork_TheKnight
         Player Player { get; set; }
         public GameManager()
         {
-            Player = SetPlayerState();
         }
-        internal void GameStart()
+        internal void Start()
         {
             UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否觀看劇情？");
             if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 1)
@@ -25,43 +24,24 @@ namespace CSharpFinalWork_TheKnight
             }
 
         }
-        internal Player SetPlayerState()
+        internal void SetPlayer()
         {
             //產生一個Player 物件
             var player = new Player();
             //讓 Client 分配點數
-            DistributeState(player);
+            player.DistributeProperty();
             //依照點數產生相對應的裝備 & 技能
-            //回傳 Player 物件
-            return null;
+            player.SetFightProperty();
+            //set Player 物件
+            Player =  player;
         }
-        private void DistributeState(Player player)
-        {
-            void SetPlayerProperty()
-            {
-                player.ShowDistribute();
-                player.ShowState();
-                int s = UiGenerate.RenderOutEnumMenu<Player.PlayerBasicProperty>();
-                Player.Distribute((Player.PlayerBasicProperty)s);
-            }
-
-            while (true)
-            {
-                if (player.Point < 10)
-                { //可選擇直接開打
-                    break;
-                }
-                SetPlayerProperty();
-
-            }
-
-        }
-        internal bool FightState()
+      
+        internal bool Fight()
         {
             //排定戰鬥順序
             ////輪到魔像的基本AI
             ////輪到玩家的攻擊選擇
-            int playerAttackPoint = Player.Move();
+            Player.Move();
             return false;
         }
     }
