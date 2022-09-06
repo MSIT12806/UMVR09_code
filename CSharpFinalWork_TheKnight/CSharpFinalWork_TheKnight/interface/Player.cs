@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace Console2048
 {
     /// <summary>
-    /// 回傳：攻擊力加成 & 減傷效果 & 作用回合數
+    /// 回傳：攻擊 
     /// </summary>
-    delegate (float agressiveBonusPercent, int damageDecreasePoint, int round) ReleaseSkill();
-    internal class Player
+    delegate (int damage, int rounds) ReleaseSkill(AbstractCharacter target);
+    internal class Player : AbstractCharacter
     {
         int _power;
         int _endurance;
@@ -18,34 +18,29 @@ namespace Console2048
         int _sword;
         int _sheild;
 
-        public int Point { get; private set; }
-        public int Power { get { return _power; } set { if (DecreacePointWhenPropertyAdd(value)) _power = value; } }
-        public int Endurance { get { return _endurance; } set { if (DecreacePointWhenPropertyAdd(value)) _endurance = value; } }
-        public int Agile { get { return _agile; } set { if (DecreacePointWhenPropertyAdd(value)) _agile = value; } }
-        public int SwordPoint { get { return _sword; } set { if (DecreacePointWhenPropertyAdd(value)) _sword = value; } }
-        public int ShieldPoint { get { return _sheild; } set { if (DecreacePointWhenPropertyAdd(value)) _sheild = value; } }
+        public int OriginPoint { get; private set; }
+        public int Power { get { return _power; } set { if (DecreacePointWhenPropertyAdd(value - _power)) _power = value; } }
+        public int Endurance { get { return _endurance; } set { if (DecreacePointWhenPropertyAdd(value - _endurance)) _endurance = value; } }
+        public int Agile { get { return _agile; } set { if (DecreacePointWhenPropertyAdd(value - _agile)) _agile = value; } }
+        public int SwordPoint { get { return _sword; } set { if (DecreacePointWhenPropertyAdd(value - _sword)) _sword = value; } }
+        public int ShieldPoint { get { return _sheild; } set { if (DecreacePointWhenPropertyAdd(value - _sheild)) _sheild = value; } }
 
         public Player()
         {
-            Point = 100;
+            OriginPoint = 100;
         }
-        public int Hp { private set; get; }
-        public int Stamina { private set; get; }
-        public int Speed { private set; get; }
-        public AbstractSword Sword { private set; get; }
-        public AbstractShield Shield { private set; get; }
 
-        public Dictionary<string, ReleaseSkill> Skills = new Dictionary<string, ReleaseSkill>();
-        public ReleaseSkill nowSkill { private set; get; }
-        public void Move()
+        public void Move(AbstractCharacter t)
         {
             //跳出選單讓玩家選擇技能(回傳陣列字串)
             var skillsKeyArray = Skills.Keys.ToArray();
             int skillIndex = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, skillsKeyArray);
-            nowSkill = Skills[skillsKeyArray[skillIndex]];
+            NowSkill = Skills[skillsKeyArray[skillIndex]];
             //注入玩家選擇的技能，並回傳值。
-
-
+            (var d, var r) = NowSkill(t);
+            if (r > 0)
+                NowBuffs.Add((skillsKeyArray[skillIndex], r));
+            t.GetHurt(r);
 
         }
         internal void SetFightProperty()
@@ -101,14 +96,32 @@ namespace Console2048
             }            //set skill when property arrived.
             if (this.Power >= 35)
             {
-                Skills.Add("爆裂砍擊", () => (2, 0, 1));
+                Skills.Add("勢如破竹", p =>
+                {
+                    p.Stamina -= 1;
+                    p.AttackBuff += 0.2f;
+                    return (0, 5);
+                });
+            }
+            else if (this.Endurance >= 35)
+            {
+                Skills.Add("血牛爆發", p =>
+                {
+                    p.Stamina -= 1;
+                    p.Stamina *= 0.75f;
+                    Attack = (int)(p.Attack * 1.5f);
+                    return (0, 0);
+                });
             }
             else if (this.Agile >= 35)
             {
-                Skills.Add("暗隱伏擊", () => (3, 0, 1));
+                Skills.Add("暗隱伏擊", p =>{
+                    p.Stamina -= 1;
+                    p.擊暈率 *= 3;
+                    return (0, 3);
+                });
             }
         }
-
         public enum PlayerBasicProperty
         {
             Power,
@@ -120,7 +133,7 @@ namespace Console2048
 
         internal void ShowDistribute()
         {
-            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{Point}", "請選擇屬性");
+            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{OriginPoint}", "請選擇屬性");
         }
 
         internal void ShowState()
@@ -140,13 +153,14 @@ namespace Console2048
 
         public void Distribute(PlayerBasicProperty s)
         {
-            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{Point}", $"已選擇：{s}");
+            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{OriginPoint}", $"已選擇：{s}");
             string input = UiGenerate.RenderOutMenuReadLine("請輸入要加多少點數：");
             int inputPoint = -1;
             if (!int.TryParse(input, out inputPoint))
             {
                 UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "錯誤：輸入的不是數值。");
                 UiGenerate.PressAnyKeyToContinue();
+                return;
             }
 
             switch (s)
@@ -176,7 +190,7 @@ namespace Console2048
             while (true)
             {
 
-                if (Point < 10)
+                if (OriginPoint < 10)
                 {
                     ShowState();
                     UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否進入戰鬥？");
@@ -190,15 +204,18 @@ namespace Console2048
             }
 
         }
+        /// <summary>
+        /// return: 點數是否足夠
+        /// </summary>
         private bool DecreacePointWhenPropertyAdd(int val)
         {
-            if (val > Point)
+            if (val > OriginPoint)
             {
                 UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "錯誤：你的點數不足。");
                 UiGenerate.PressAnyKeyToContinue();
                 return false;
             }
-            Point -= val;
+            OriginPoint -= val;
             return true;
         }
     }

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Console2048
 {
-    internal class Giant
+    internal abstract class Giant
 {
 }
+    internal class TestGiant
+    {
+        
+    }
 }

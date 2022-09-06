@@ -100,10 +100,10 @@ namespace AdvanceCS
                 return sum;
             }
             #endregion
+            #region Switch 運算式 (8.0 .net core 3.x .net standard2.1)
 
             // data switch vs switch(data)
-            // 屬性模式: data switch{ {data內的屬性}=>, }
-            #region Switch 運算式 (8.0 .net core 3.x .net standard2.1)
+            // 屬性模式: data switch{ { data 內的屬性}=>, }
             object switchSampleValue = 5;
             int c = switchSampleValue.GetType().Name switch
             {
@@ -113,6 +113,15 @@ namespace AdvanceCS
                 _ => throw new NotImplementedException(),//其他所有情況
             };
             // tuple模式: (t1, t2) switch{ (v1, v2)=>, }
+            var test = ('A', 'B');
+            var result = test switch
+            {
+                ('A', 'B') => "OK",
+                ('A', _) => "First part OK",
+                (_, 'B') => "Second part OK",
+                _ => "Not OK",
+            };
+
             #endregion
             #region Type 類別的類別 + relection技術
             //找到從基類派生的所有類

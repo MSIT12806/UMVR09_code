@@ -9,13 +9,14 @@ namespace CSharpFinalWork_TheKnight
     internal class GameManager
     {
         Player Player { get; set; }
+        public int Round { get; set; }
         public GameManager()
         {
         }
         internal void Start()
         {
             UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否觀看劇情？");
-            if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 1)
+            if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 0)
             {
                 UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "??：", "勇者，你費盡千辛萬苦終於到了這個地方，", "眼前矗立著最後的難關──一個巨大的魔像，", "打敗他以後，你將成功的拯救公主，並與她共度美好的餘生。");
                 UiGenerate.PressAnyKeyToContinue();

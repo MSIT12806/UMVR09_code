@@ -47,8 +47,10 @@
     <Compile Include="interface\AbstractCreature.cs" />
     <Compile Include="interface\AbstractShield.cs" />
     <Compile Include="interface\AbstractSkill.cs" />
+    <Compile Include="interface\AbstractCharacter.cs" />
     <Compile Include="interface\AbstractSword.cs" />
     <Compile Include="interface\Giant.cs" />
+    <Compile Include="interface\ICombinable.cs" />
     <Compile Include="interface\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,12 +61,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="document\GameSetting.txt" />
+    <Content Include="document\GameProgramDesign.txt" />
+    <Content Include="document\GamePlaining.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\ClassLivrary1.csproj">
+    <ProjectReference Include="..\ClassLibrary1\ConsoleUiHelper.csproj">
       <Project>{9c9023ae-e57c-4b21-86aa-dfb9d3432ec1}</Project>
-      <Name>ClassLivrary1</Name>
+      <Name>ConsoleUiHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataStruct\DataStruct.csproj">
+      <Project>{01f13fee-ceba-41da-aee9-c2740165849b}</Project>
+      <Name>DataStruct</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

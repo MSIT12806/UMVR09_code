@@ -8,7 +8,7 @@ namespace Console2048
 {
     internal abstract class AbstractShield
     {
-        public Dictionary<string, ReleaseSkill> Skills;
+        private Dictionary<string, ReleaseSkill> Skills = new Dictionary<string, ReleaseSkill>();
         protected Player _player;
         public AbstractShield(Player player)
         {
