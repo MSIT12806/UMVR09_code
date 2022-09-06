@@ -1,5 +1,6 @@
 ﻿using Console2048;
 using System;
+using System.Linq;
 
 namespace CSharpFinalWork_TheKnight
 {
@@ -9,6 +10,7 @@ namespace CSharpFinalWork_TheKnight
     internal class GameManager
     {
         Player Player { get; set; }
+        Giant Giant { get; set; }
         public int Round { get; set; }
         public GameManager()
         {
@@ -42,8 +44,24 @@ namespace CSharpFinalWork_TheKnight
             //排定戰鬥順序
             ////輪到魔像的基本AI
             ////輪到玩家的攻擊選擇
-            Player.Move();
+            Player.ResetState();
+            Player.UseSkill();
+            PlayerMove();
             return false;
+        }
+
+
+        private void PlayerMove()
+        {
+            //跳出選單讓玩家選擇技能(回傳陣列字串)
+            var skillsKeyArray = Player.Skills.Keys.ToArray();
+            int skillIndex = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, skillsKeyArray);
+
+            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "請選擇對象");
+            int target = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "魔像", "自己");
+            AbstractCharacter t = target == 0 ? (AbstractCharacter)Giant : Player;
+
+            Player.Move(t, skillsKeyArray[skillIndex]);
         }
     }
 }

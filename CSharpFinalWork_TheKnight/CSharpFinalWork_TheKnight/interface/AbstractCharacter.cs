@@ -18,10 +18,13 @@ namespace Console2048
         public AbstractShield Shield { protected set; get; }
 
         public Dictionary<string, ReleaseSkill> Skills = new Dictionary<string, ReleaseSkill>();
-        protected List<(string, int)> NowBuffs = new List<(string, int)> ();
-        public void UseSkill(ReleaseSkill skill)
+        protected List<(string, int, AbstractCharacter target)> NowBuffs = new List<(string, int, AbstractCharacter target)> ();
+        public void UseSkill()
         {
-
+            foreach ((string sName, int round, var t) in NowBuffs)
+            {
+                Skills[sName](t);
+            }
         }
 
         public float AttackBuff { set; get; }
@@ -37,5 +40,9 @@ namespace Console2048
         {
             throw new NotImplementedException();
         }
+    }
+    internal class Giant : AbstractCharacter
+    {
+
     }
 }

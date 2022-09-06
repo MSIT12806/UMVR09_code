@@ -30,19 +30,31 @@ namespace Console2048
             OriginPoint = 100;
         }
 
-        public void Move(AbstractCharacter t)
+        public void Move(AbstractCharacter t, string v)
         {
-            //跳出選單讓玩家選擇技能(回傳陣列字串)
-            var skillsKeyArray = Skills.Keys.ToArray();
-            int skillIndex = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, skillsKeyArray);
-            NowSkill = Skills[skillsKeyArray[skillIndex]];
+
             //注入玩家選擇的技能，並回傳值。
             (var d, var r) = NowSkill(t);
             if (r > 0)
-                NowBuffs.Add((skillsKeyArray[skillIndex], r));
-            t.GetHurt(r);
+                NowBuffs.Add((v, r, t));
+
+
+            t.GetHurt(d);
 
         }
+
+        internal void ResetState()
+        {
+            this.AttackBuff = 1;
+            this.Attack = Power + Sword.AttackPoint;
+            this.速度 = 1000 / Agile;
+            this.命中率 = Agile / 1000;
+            this.閃避率 =  Agile / 1000;
+            this.格檔成功率 = Power / 1000;
+            this.擊暈率 = Power / 1000;
+            this.格檔發生率 =   Agile / 1000;
+        }
+
         internal void SetFightProperty()
         {
             Hp = Power * 3 + Endurance * 5;
