@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Console2048
 {
-    internal abstract class AbstractSword
+    internal abstract class Sword
     {
         protected Player _player;
-        public AbstractSword(Player player)
+        public Sword(Player player)
         {
             _player = player;
         }
@@ -31,13 +31,13 @@ namespace Console2048
             return Skills.Keys;
         }
 
-        protected (int damage, int rounds) Attack(AbstractCharacter p)
+        protected (int damage, int rounds) Attack(FightCharacter p)
         {
             p.Stamina -= 1;
             return (p.Attack + AttackPoint, 0);
         }
     }
-    internal class NoSword : AbstractSword
+    internal class NoSword : Sword
     {
         public NoSword(Player player) : base(player)
         {
@@ -48,7 +48,7 @@ namespace Console2048
 
         protected override IEnumerable<string> AppendSkillsByShield()
         {
-            AbstractShield shield = _player.Shield;
+            Shield shield = _player.Shield;
             if (shield.GetType().Name == typeof(SuperHeavyShield).Name)
             {
                 Skills.Add("固若金湯", p =>
@@ -68,7 +68,7 @@ namespace Console2048
             return Skills.Keys;
         }
     }
-    internal class NormalSword : AbstractSword
+    internal class NormalSword : Sword
     {
         public NormalSword(Player player) : base(player)
         {
@@ -77,7 +77,7 @@ namespace Console2048
             Skills.Add("普通砍擊", Attack);
         }
     }
-    internal class GoodSword : AbstractSword
+    internal class GoodSword : Sword
     {
         public GoodSword(Player player) : base(player)
         {
@@ -86,7 +86,7 @@ namespace Console2048
             Skills.Add("好的砍擊", Attack);
         }
     }
-    internal class NiceSword : AbstractSword
+    internal class NiceSword : Sword
     {
         public NiceSword(Player player) : base(player)
         {
@@ -95,7 +95,7 @@ namespace Console2048
             Skills.Add("優良砍擊", Attack);
         }
     }
-    internal class TwoHandSword : AbstractSword
+    internal class TwoHandSword : Sword
     {
         public TwoHandSword(Player player) : base(player)
         {

@@ -36,20 +36,27 @@ namespace CSharpFinalWork_TheKnight
             //依照點數產生相對應的裝備 & 技能
             player.SetFightProperty();
             //set Player 物件
-            Player =  player;
+            Player = player;
         }
-      
+
         internal bool Fight()
         {
             //排定戰鬥順序
+            Func<FightCharacter, FightCharacter, FightCharacter> findNowFighter = (a, b) => a.FightRoundPoint >= b.FightRoundPoint ? a : b;
+
+            FightCharacter nowFighter = RonToolsSt20.Compare.Best<FightCharacter>(findNowFighter, Player, Giant);
             ////輪到魔像的基本AI
             ////輪到玩家的攻擊選擇
-            Player.ResetState();
-            Player.UseSkill();
+            ResetState();
+            nowFighter.UseSkill();
             PlayerMove();
             return false;
         }
 
+        private void ResetState()
+        {
+            throw new NotImplementedException();
+        }
 
         private void PlayerMove()
         {
@@ -59,7 +66,7 @@ namespace CSharpFinalWork_TheKnight
 
             UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "請選擇對象");
             int target = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "魔像", "自己");
-            AbstractCharacter t = target == 0 ? (AbstractCharacter)Giant : Player;
+            FightCharacter t = target == 0 ? (FightCharacter)Giant : Player;
 
             Player.Move(t, skillsKeyArray[skillIndex]);
         }

@@ -9,52 +9,114 @@ namespace Console2048
     /// <summary>
     /// 回傳：攻擊 
     /// </summary>
-    delegate (int damage, int rounds) ReleaseSkill(AbstractCharacter target);
-    internal class Player : AbstractCharacter
+    delegate (int damage, int rounds) ReleaseSkill(FightCharacter target);
+    internal class Player : FightCharacter
     {
+        //前置屬性
+        public int OriginPoint { get; private set; }
+        public Player()
+        {
+            OriginPoint = 100;
+        }
+
+        #region 分配階段
+
         int _power;
         int _endurance;
         int _agile;
         int _sword;
         int _sheild;
 
-        public int OriginPoint { get; private set; }
+        public enum PlayerBasicProperty
+        {
+            Power,
+            Endurance,
+            Agile,
+            Sword,
+            Sheild,
+        }
+
+        //體質
         public int Power { get { return _power; } set { if (DecreacePointWhenPropertyAdd(value - _power)) _power = value; } }
         public int Endurance { get { return _endurance; } set { if (DecreacePointWhenPropertyAdd(value - _endurance)) _endurance = value; } }
         public int Agile { get { return _agile; } set { if (DecreacePointWhenPropertyAdd(value - _agile)) _agile = value; } }
         public int SwordPoint { get { return _sword; } set { if (DecreacePointWhenPropertyAdd(value - _sword)) _sword = value; } }
         public int ShieldPoint { get { return _sheild; } set { if (DecreacePointWhenPropertyAdd(value - _sheild)) _sheild = value; } }
 
-        public Player()
+        internal void ShowDistribute()
         {
-            OriginPoint = 100;
+            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{OriginPoint}", "請選擇屬性");
         }
 
-        public void Move(AbstractCharacter t, string v)
+        public void Distribute(PlayerBasicProperty s)
+        {
+            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{OriginPoint}", $"已選擇：{s}");
+            string input = UiGenerate.RenderOutMenuReadLine("請輸入要加多少點數：");
+            int inputPoint = -1;
+            if (!int.TryParse(input, out inputPoint))
+            {
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "錯誤：輸入的不是數值。");
+                UiGenerate.PressAnyKeyToContinue();
+                return;
+            }
+
+            switch (s)
+            {
+                case PlayerBasicProperty.Power:
+                    Power += inputPoint;
+                    break;
+                case PlayerBasicProperty.Endurance:
+                    Endurance += inputPoint;
+                    break;
+                case PlayerBasicProperty.Agile:
+                    Agile += inputPoint;
+                    break;
+                case PlayerBasicProperty.Sword:
+                    SwordPoint += inputPoint;
+                    break;
+                case PlayerBasicProperty.Sheild:
+                    ShieldPoint += inputPoint;
+                    break;
+                default:
+                    break;
+            }
+        }
+        internal void DistributeProperty()
         {
 
-            //注入玩家選擇的技能，並回傳值。
-            (var d, var r) = NowSkill(t);
-            if (r > 0)
-                NowBuffs.Add((v, r, t));
+            while (true)
+            {
 
+                if (OriginPoint < 10)
+                {
+                    ShowState();
+                    UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否進入戰鬥？");
+                    if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 0)
+                        return;
+                }
+                ShowDistribute();
+                int s = UiGenerate.RenderOutEnumMenu<Player.PlayerBasicProperty>();
+                Distribute((Player.PlayerBasicProperty)s);
 
-            t.GetHurt(d);
+            }
 
         }
-
-        internal void ResetState()
+        /// <summary>
+        /// return: 點數是否足夠
+        /// </summary>
+        private bool DecreacePointWhenPropertyAdd(int val)
         {
-            this.AttackBuff = 1;
-            this.Attack = Power + Sword.AttackPoint;
-            this.速度 = 1000 / Agile;
-            this.命中率 = Agile / 1000;
-            this.閃避率 =  Agile / 1000;
-            this.格檔成功率 = Power / 1000;
-            this.擊暈率 = Power / 1000;
-            this.格檔發生率 =   Agile / 1000;
+            if (val > OriginPoint)
+            {
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "錯誤：你的點數不足。");
+                UiGenerate.PressAnyKeyToContinue();
+                return false;
+            }
+            OriginPoint -= val;
+            return true;
         }
-
+        #endregion
+        #region 戰鬥前置階段
         internal void SetFightProperty()
         {
             Hp = Power * 3 + Endurance * 5;
@@ -127,26 +189,49 @@ namespace Console2048
             }
             else if (this.Agile >= 35)
             {
-                Skills.Add("暗隱伏擊", p =>{
+                Skills.Add("暗隱伏擊", p => {
                     p.Stamina -= 1;
                     p.擊暈率 *= 3;
                     return (0, 3);
                 });
             }
         }
-        public enum PlayerBasicProperty
+
+        public void SetFightRoundUnitValue()
         {
-            Power,
-            Endurance,
-            Agile,
-            Sword,
-            Sheild,
+            FightRoundUnit = 1 / Agile;
+        }
+        #endregion
+        #region 戰鬥階段
+
+        public void Move(FightCharacter t, string v)
+        {
+
+            //注入玩家選擇的技能，並回傳值。
+            (var d, var r) = NowSkill(t);
+            if (r > 0)
+                NowBuffs.Add((v, r, t));
+
+
+            t.GetHurt(d);
+
         }
 
-        internal void ShowDistribute()
+        internal void ResetState()
         {
-            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{OriginPoint}", "請選擇屬性");
+            this.AttackBuff = 1;
+            this.Attack = Power + Sword.AttackPoint;
+            this.速度 = 1000 / Agile;
+            this.命中率 = Agile / 1000;
+            this.閃避率 = Agile / 1000;
+            this.格檔成功率 = Power / 1000;
+            this.擊暈率 = Power / 1000;
+            this.格檔發生率 = Agile / 1000;
         }
+
+        #endregion
+
+
 
         internal void ShowState()
         {
@@ -163,72 +248,5 @@ namespace Console2048
                 );
         }
 
-        public void Distribute(PlayerBasicProperty s)
-        {
-            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "分配你的點數，以找出擊敗魔像的方法。", $"剩餘點數：{OriginPoint}", $"已選擇：{s}");
-            string input = UiGenerate.RenderOutMenuReadLine("請輸入要加多少點數：");
-            int inputPoint = -1;
-            if (!int.TryParse(input, out inputPoint))
-            {
-                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "錯誤：輸入的不是數值。");
-                UiGenerate.PressAnyKeyToContinue();
-                return;
-            }
-
-            switch (s)
-            {
-                case PlayerBasicProperty.Power:
-                    Power += inputPoint;
-                    break;
-                case PlayerBasicProperty.Endurance:
-                    Endurance += inputPoint;
-                    break;
-                case PlayerBasicProperty.Agile:
-                    Agile += inputPoint;
-                    break;
-                case PlayerBasicProperty.Sword:
-                    SwordPoint += inputPoint;
-                    break;
-                case PlayerBasicProperty.Sheild:
-                    ShieldPoint += inputPoint;
-                    break;
-                default:
-                    break;
-            }
-        }
-        internal void DistributeProperty()
-        {
-
-            while (true)
-            {
-
-                if (OriginPoint < 10)
-                {
-                    ShowState();
-                    UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否進入戰鬥？");
-                    if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 0)
-                        return;
-                }
-                ShowDistribute();
-                int s = UiGenerate.RenderOutEnumMenu<Player.PlayerBasicProperty>();
-                Distribute((Player.PlayerBasicProperty)s);
-
-            }
-
-        }
-        /// <summary>
-        /// return: 點數是否足夠
-        /// </summary>
-        private bool DecreacePointWhenPropertyAdd(int val)
-        {
-            if (val > OriginPoint)
-            {
-                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "錯誤：你的點數不足。");
-                UiGenerate.PressAnyKeyToContinue();
-                return false;
-            }
-            OriginPoint -= val;
-            return true;
-        }
     }
 }

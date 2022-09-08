@@ -65,6 +65,10 @@
     <Content Include="document\GamePlaining.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\RonToolsSt20\RonToolsSt20.csproj">
+      <Project>{2ce75e68-b0b3-4f13-85b5-034ebea0d214}</Project>
+      <Name>RonToolsSt20</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClassLibrary1\ConsoleUiHelper.csproj">
       <Project>{9c9023ae-e57c-4b21-86aa-dfb9d3432ec1}</Project>
       <Name>ConsoleUiHelper</Name>
