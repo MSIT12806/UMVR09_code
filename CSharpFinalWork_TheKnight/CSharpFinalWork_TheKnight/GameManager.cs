@@ -1,5 +1,6 @@
 ﻿using Console2048;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CSharpFinalWork_TheKnight
@@ -12,9 +13,27 @@ namespace CSharpFinalWork_TheKnight
         Player Player { get; set; }
         Giant Giant { get; set; }
         public int Round { get; set; }
+        bool win = false;
+        List<string> fightProcess = new List<string>();
         public GameManager()
         {
         }
+        public void Game()
+        {
+            while (!win)
+            {
+                Start();
+                SetPlayer();
+                Fight();
+                if (End())
+                {
+                    UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "遊戲結束");
+                    UiGenerate.PressAnyKeyToContinue();
+                }
+            }
+        }
+
+
         internal void Start()
         {
             UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否觀看劇情？");
@@ -26,6 +45,9 @@ namespace CSharpFinalWork_TheKnight
                 UiGenerate.PressAnyKeyToContinue();
             }
 
+            //選擇難易度？
+            Giant = new Giant();
+
         }
         internal void SetPlayer()
         {
@@ -33,42 +55,87 @@ namespace CSharpFinalWork_TheKnight
             var player = new Player();
             //讓 Client 分配點數
             player.DistributeProperty();
-            //依照點數產生相對應的裝備 & 技能
-            player.SetFightProperty();
             //set Player 物件
             Player = player;
         }
 
-        internal bool Fight()
+        internal void Fight()
         {
-            //排定戰鬥順序
-            Func<FightCharacter, FightCharacter, FightCharacter> findNowFighter = (a, b) => a.FightRoundPoint >= b.FightRoundPoint ? a : b;
+            //前置作業
 
-            FightCharacter nowFighter = RonToolsSt20.Compare.Best<FightCharacter>(findNowFighter, Player, Giant);
-            ////輪到魔像的基本AI
-            ////輪到玩家的攻擊選擇
-            ResetState();
-            nowFighter.UseSkill();
-            PlayerMove();
-            return false;
+            //1. 綁定雙方戰鬥物件
+            Player.SetOpponent(Giant);
+            Giant.SetOpponent(Player);
+            //2. 生成戰鬥屬性
+            //依照點數產生相對應的裝備 & 技能 & 從gm注入要挑戰的對象
+            Player.SetFightProperty();
+            Player.SetState();
+            Giant.SetState();
+            //3. 排定戰鬥順序
+            Func<FightCharacter, FightCharacter, FightCharacter> findNowFighter = (a, b) =>
+            {
+                return a.FightRoundPoint >= b.FightRoundPoint ? b : a;
+            };
+            //3. 戰鬥迴圈
+            while (Player.Stamina >= 0 && Player.Hp >= 0 && Giant.Hp >= 0)
+            {
+
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "");
+                UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Plot, fightProcess.ToArray());
+                Giant.ShowState();
+                Player.ShowState();
+                FightCharacter nowFighter = RonToolsSt20.Compare.Best<FightCharacter>(findNowFighter, Player, Giant);
+                nowFighter.FightRoundPoint += nowFighter.FightRoundUnit;
+                ////輪到魔像的基本AI
+                ////輪到玩家的攻擊選擇
+                ResetState();
+                nowFighter.SetBuffAndUseSkill();
+
+                if (nowFighter == Player)
+                    Player.SelectSkill();
+                else
+                    Giant.RandomSkill();
+
+                fightProcess.AddRange(nowFighter.nowFightContext);
+                nowFighter.nowFightContext.Clear();
+            }
+            if (Player.Stamina <= 0 || Player.Hp <= 0)
+                win = false;
+            else if (Giant.Hp <= 0)
+                win = true;
+
+            void ResetState()
+            {
+                Player.ResetState();
+                Giant.ResetState();
+            }
         }
 
-        private void ResetState()
+        private bool End()
         {
-            throw new NotImplementedException();
+            if (win)
+            {
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "您成功擊敗魔像");
+                UiGenerate.PressAnyKeyToContinue();
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "但是沒有公主");
+                UiGenerate.PressAnyKeyToContinue();
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "當然也沒有從此幸福快樂的生活");
+                UiGenerate.PressAnyKeyToContinue();
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "明天還要上班上學");
+                UiGenerate.PressAnyKeyToContinue();
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "早點睡吧，你人生的鬥爭還長著呢。");
+                UiGenerate.PressAnyKeyToContinue();
+                return true;
+            }
+            else
+            {
+                UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "您失敗了", "是否重新嘗試？");
+                bool end = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 1;
+                return end;
+            }
         }
 
-        private void PlayerMove()
-        {
-            //跳出選單讓玩家選擇技能(回傳陣列字串)
-            var skillsKeyArray = Player.Skills.Keys.ToArray();
-            int skillIndex = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, skillsKeyArray);
-
-            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "請選擇對象");
-            int target = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "魔像", "自己");
-            FightCharacter t = target == 0 ? (FightCharacter)Giant : Player;
-
-            Player.Move(t, skillsKeyArray[skillIndex]);
-        }
     }
+
+
 }

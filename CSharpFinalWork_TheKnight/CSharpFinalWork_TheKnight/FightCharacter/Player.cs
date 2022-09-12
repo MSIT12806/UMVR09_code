@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 namespace Console2048
 {
     /// <summary>
-    /// 回傳：攻擊 
+    /// 傳入：目標。回傳：攻擊 、回合數
     /// </summary>
-    delegate (int damage, int rounds) ReleaseSkill(FightCharacter target);
-    internal class Player : FightCharacter
+    public delegate (int damage, int rounds) ReleaseSkill(FightCharacter target);
+    public class Player : FightCharacter
     {
         //前置屬性
         public int OriginPoint { get; private set; }
         public Player()
         {
+            Name = "勇者";
             OriginPoint = 100;
         }
 
@@ -42,6 +43,26 @@ namespace Console2048
         public int Agile { get { return _agile; } set { if (DecreacePointWhenPropertyAdd(value - _agile)) _agile = value; } }
         public int SwordPoint { get { return _sword; } set { if (DecreacePointWhenPropertyAdd(value - _sword)) _sword = value; } }
         public int ShieldPoint { get { return _sheild; } set { if (DecreacePointWhenPropertyAdd(value - _sheild)) _sheild = value; } }
+
+        //戰鬥前置屬性
+        public override int FightRoundUnit { get; protected set; }
+        public override int FightRoundPoint { get; set; }
+        public override FightCharacter opponent { get; protected set; }
+
+        //戰鬥體質
+        public override Dictionary<string, ReleaseSkill> Skills { get; } = new Dictionary<string, ReleaseSkill>();
+        public override int Hp { get; set; }
+        public override float Stamina { get; set; }
+        public override float Speed { get; set; }
+        public override Sword Sword { get; protected set; }
+        public override Shield Shield { get; protected set; }
+        public override int Attack { get; set; }
+        public override float 速度 { get; set; }
+        public override float 命中率 { get; set; }
+        public override float 閃避率 { get; set; }
+        public override float 擊暈率 { get; set; }
+        public override float 格檔發生率 { get; set; }
+        public override float 格檔成功率 { get; set; }
 
         internal void ShowDistribute()
         {
@@ -81,6 +102,9 @@ namespace Console2048
                     break;
             }
         }
+
+
+
         internal void DistributeProperty()
         {
 
@@ -89,12 +113,13 @@ namespace Console2048
 
                 if (OriginPoint < 10)
                 {
-                    ShowState();
                     UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否進入戰鬥？");
+                    ShowState();
                     if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 0)
                         return;
                 }
                 ShowDistribute();
+                ShowState();
                 int s = UiGenerate.RenderOutEnumMenu<Player.PlayerBasicProperty>();
                 Distribute((Player.PlayerBasicProperty)s);
 
@@ -117,16 +142,17 @@ namespace Console2048
         }
         #endregion
         #region 戰鬥前置階段
-        internal void SetFightProperty()
+
+        public void SetFightProperty()
         {
             Hp = Power * 3 + Endurance * 5;
             Stamina = Endurance;
             Speed = Stamina;
 
             //gen sword
-            if (SwordPoint > 35 && ShieldPoint <= 0)
+            if (ShieldPoint > 35 && SwordPoint <= 0)
                 Shield = new SuperHeavyShield(this);
-            else if (SwordPoint > 35)
+            else if (ShieldPoint > 35)
                 Shield = new HeavyShield(this);
             else if (SwordPoint > 20)
                 Shield = new NiceShield(this);
@@ -136,19 +162,18 @@ namespace Console2048
                 Shield = new NoShield(this);
 
             //gen shield
-            if (ShieldPoint > 35 && SwordPoint <= 0)
+            if (SwordPoint > 35 && ShieldPoint <= 0)
                 Sword = new TwoHandSword(this);
-            else if (ShieldPoint > 35)
+            else if (SwordPoint > 35)
                 Sword = new NiceSword(this);
-            else if (ShieldPoint > 20)
+            else if (SwordPoint > 20)
                 Sword = new GoodSword(this);
-            else if (ShieldPoint > 0)
+            else if (SwordPoint > 0)
                 Sword = new NormalSword(this);
             else
                 Sword = new NoSword(this);
 
             this.GetSkills();
-
 
         }
 
@@ -189,7 +214,8 @@ namespace Console2048
             }
             else if (this.Agile >= 35)
             {
-                Skills.Add("暗隱伏擊", p => {
+                Skills.Add("暗隱伏擊", p =>
+                {
                     p.Stamina -= 1;
                     p.擊暈率 *= 3;
                     return (0, 3);
@@ -201,27 +227,12 @@ namespace Console2048
         {
             FightRoundUnit = 1 / Agile;
         }
-        #endregion
-        #region 戰鬥階段
 
-        public void Move(FightCharacter t, string v)
+        internal override void SetState()
         {
-
-            //注入玩家選擇的技能，並回傳值。
-            (var d, var r) = NowSkill(t);
-            if (r > 0)
-                NowBuffs.Add((v, r, t));
-
-
-            t.GetHurt(d);
-
-        }
-
-        internal void ResetState()
-        {
-            this.AttackBuff = 1;
+            this.FightRoundUnit = 1000 / (Agile + 1);
             this.Attack = Power + Sword.AttackPoint;
-            this.速度 = 1000 / Agile;
+            this.速度 = 1000 / (Agile + 1);
             this.命中率 = Agile / 1000;
             this.閃避率 = Agile / 1000;
             this.格檔成功率 = Power / 1000;
@@ -230,22 +241,67 @@ namespace Console2048
         }
 
         #endregion
+        #region 戰鬥階段
+        internal void SelectSkill()
+        {
+            //跳出選單讓玩家選擇技能(回傳陣列字串)
+            var skillsKeyArray = Skills.Keys.ToArray();
+            int skillIndex = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, skillsKeyArray);
+
+            UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "請選擇對象");
+            int targetIdx = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "魔像", "自己");
+            FightCharacter t = targetIdx == 0 ? opponent : this;
+            nowFightContext.Add($"{this.Name} 對 {t.Name} 施展 {skillsKeyArray[skillIndex]}");
+            int damage = Move(t, skillsKeyArray[skillIndex]);
+
+            t.GetHurt(damage);
+            if (damage > 0)
+                nowFightContext.Add($" 對 {t.Name} 造成 {damage} 點 傷害");
+            int Move(FightCharacter target, string skillName)
+            {
+                //注入玩家選擇的技能，並回傳值。
+                var skill = Skills[skillName];
+                if (skill != null)
+                {
+                    (var d, var r) = skill(target);
+                    if (r > 0)
+                        NowBuffs.Enqueue((skillName, r, target));
+
+                    return d;
+                }
+                return 0;
+            }
+        }
+
+
+        #endregion
 
 
 
         internal void ShowState()
         {
-            UiGenerate.RenderOut(false, UiGenerate.WindowSelect.State,
-                $"基本數值：",
-                $"力量：{Power}",
-                $"耐力：{Endurance}",
-                $"敏捷：{Agile}",
-                $"劍：{Sword}",
-                $"盾：{ShieldPoint}",
-                "",
-                $"戰鬥數值："
-
-                );
+            List<string> builder = new List<string>();
+            builder.Add($"基本數值：");
+            builder.Add($"力量：{Power}");
+            builder.Add($"耐力：{Endurance}");
+            builder.Add($"敏捷：{Agile}");
+            builder.Add($"劍：{Sword}");
+            builder.Add($"盾：{Shield}");
+            builder.Add($"");
+            builder.Add($"戰鬥數值：");
+            builder.Add($"Hp:{Hp}");
+            builder.Add($"力竭:{Stamina}");
+            builder.Add($"速度:{Speed}");
+            builder.Add($"攻擊力：{Attack}");
+            builder.Add($"命中率：{命中率}");
+            builder.Add($"閃避率：{閃避率}");
+            builder.Add($"擊暈率：{擊暈率}");
+            builder.Add($"格檔發生率：{格檔發生率}");
+            builder.Add($"格檔成功率：{格檔成功率}");
+            builder.Add("");
+            builder.Add($"狀態：");
+            builder.AddRange(NowBuffs.Select(i => i.Item1).ToArray());
+            UiGenerate.RenderOut(false, UiGenerate.WindowSelect.State, builder.ToArray());
         }
 
     }

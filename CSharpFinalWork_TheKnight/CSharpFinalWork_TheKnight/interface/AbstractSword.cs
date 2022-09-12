@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Console2048
 {
-    internal abstract class Sword
+    public abstract class Sword
     {
         protected Player _player;
         public Sword(Player player)
         {
             _player = player;
         }
-        public string Name { get; private set; }
+        public abstract string Name { get; }
         public int AttackPoint { get; protected set; }
 
         protected Dictionary<string, ReleaseSkill> Skills;
@@ -31,10 +31,10 @@ namespace Console2048
             return Skills.Keys;
         }
 
-        protected (int damage, int rounds) Attack(FightCharacter p)
+        protected virtual (int damage, int rounds) Attack(FightCharacter p)
         {
-            p.Stamina -= 1;
-            return (p.Attack + AttackPoint, 0);
+            _player.Stamina -= 1;
+            return ((int)((_player.Attack + AttackPoint) * _player.AttackBuff), 0);
         }
     }
     internal class NoSword : Sword
@@ -45,6 +45,8 @@ namespace Console2048
             Skills = new Dictionary<string, ReleaseSkill>();
             Skills.Add("徒手毆打", Attack);
         }
+
+        public override string Name { get; } = "赤手空拳";
 
         protected override IEnumerable<string> AppendSkillsByShield()
         {
@@ -70,6 +72,7 @@ namespace Console2048
     }
     internal class NormalSword : Sword
     {
+        public override string Name { get; } = "劍";
         public NormalSword(Player player) : base(player)
         {
             AttackPoint = 10;
@@ -79,6 +82,7 @@ namespace Console2048
     }
     internal class GoodSword : Sword
     {
+        public override string Name { get; } = "利劍";
         public GoodSword(Player player) : base(player)
         {
             AttackPoint = 18;
@@ -88,20 +92,44 @@ namespace Console2048
     }
     internal class NiceSword : Sword
     {
+        public override string Name { get; } = "精良利劍";
         public NiceSword(Player player) : base(player)
         {
             AttackPoint = 28;
             Skills = new Dictionary<string, ReleaseSkill>();
             Skills.Add("優良砍擊", Attack);
+            if (player.Shield.Name == "精良盾")
+                Skills.Add("精良狀態", t =>
+                {
+                    _player.AttackBuff += 0.2f;
+                    _player.防禦力Buff += 20f;
+                    return (0, 5);
+                });
         }
     }
     internal class TwoHandSword : Sword
     {
+        public override string Name { get; } = "雙手劍";
+        protected override (int damage, int rounds) Attack(FightCharacter target)
+        {
+            _player.Stamina -= 1;
+            return base.Attack(target);
+        }
         public TwoHandSword(Player player) : base(player)
         {
             AttackPoint = 40;
             Skills = new Dictionary<string, ReleaseSkill>();
-            Skills.Add("優良砍擊", Attack);
+            Skills.Add("特級砍擊", Attack);
+            Skills.Add("天崩地裂斬", p =>
+            {
+                p.AttackBuff += 4;
+                return Attack(p.opponent);
+            });
+            Skills.Add("以劍代盾", p =>
+            {
+                p.防禦力Buff += p.Sword.AttackPoint * 0.8f;
+                return (0, 5);
+            });
         }
     }
 }

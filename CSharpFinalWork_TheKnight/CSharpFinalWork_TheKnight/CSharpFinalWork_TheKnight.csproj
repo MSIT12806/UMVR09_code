@@ -46,16 +46,14 @@
     <Compile Include="GameManager.cs" />
     <Compile Include="interface\AbstractCreature.cs" />
     <Compile Include="interface\AbstractShield.cs" />
-    <Compile Include="interface\AbstractSkill.cs" />
-    <Compile Include="interface\AbstractCharacter.cs" />
+    <Compile Include="FightCharacter\FightCharacter.cs" />
     <Compile Include="interface\AbstractSword.cs" />
-    <Compile Include="interface\Giant.cs" />
-    <Compile Include="interface\ICombinable.cs" />
-    <Compile Include="interface\Player.cs" />
+    <Compile Include="FightCharacter\Giant.cs" />
+    <Compile Include="FightCharacter\Player.cs" />
+    <Compile Include="interface\Test.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Singalton.cs" />
-    <Compile Include="UiGenerate.cs" />
+    <Compile Include="Ui\UiGenerate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

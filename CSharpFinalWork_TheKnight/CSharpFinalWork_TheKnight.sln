@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUiHelper", "ClassLib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStruct", "DataStruct\DataStruct.csproj", "{01F13FEE-CEBA-41DA-AEE9-C2740165849B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonToolsSt20", "..\..\RonToolsSt20\RonToolsSt20.csproj", "{2CE75E68-B0B3-4F13-85B5-034EBEA0D214}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RonToolsSt20", "..\..\RonToolsSt20\RonToolsSt20.csproj", "{2CE75E68-B0B3-4F13-85B5-034EBEA0D214}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpFinalWork_TheKnightTests", "CSharpFinalWork_TheKnightTests\CSharpFinalWork_TheKnightTests.csproj", "{ACD94F30-7796-4274-955E-A9F83A174934}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2CE75E68-B0B3-4F13-85B5-034EBEA0D214}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CE75E68-B0B3-4F13-85B5-034EBEA0D214}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CE75E68-B0B3-4F13-85B5-034EBEA0D214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACD94F30-7796-4274-955E-A9F83A174934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACD94F30-7796-4274-955E-A9F83A174934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACD94F30-7796-4274-955E-A9F83A174934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACD94F30-7796-4274-955E-A9F83A174934}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
