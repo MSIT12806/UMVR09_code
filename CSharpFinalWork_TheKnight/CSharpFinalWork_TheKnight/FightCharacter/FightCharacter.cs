@@ -69,7 +69,7 @@ namespace Console2048
         public float 格檔發生率Buff { set; get; }
         public float 格檔成功率Buff { set; get; }
         public List<string> nowFightContext = new List<string>();
-        internal abstract void SetState();
+        internal abstract void SetState(int round);
         internal virtual void ResetState()
         {
             AttackBuff = 速度Buff = 1;

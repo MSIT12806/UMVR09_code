@@ -12,7 +12,7 @@ namespace CSharpFinalWork_TheKnight
     {
         Player Player { get; set; }
         Giant Giant { get; set; }
-        public int Round { get; set; }
+        public int Round { get; set; } = 2;
         bool win = false;
         List<string> fightProcess = new List<string>();
         public GameManager()
@@ -29,7 +29,10 @@ namespace CSharpFinalWork_TheKnight
                 {
                     UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "遊戲結束");
                     UiGenerate.PressAnyKeyToContinue();
+                    return;
                 }
+                Round++;
+                fightProcess.Clear();
             }
         }
 
@@ -69,8 +72,8 @@ namespace CSharpFinalWork_TheKnight
             //2. 生成戰鬥屬性
             //依照點數產生相對應的裝備 & 技能 & 從gm注入要挑戰的對象
             Player.SetFightProperty();
-            Player.SetState();
-            Giant.SetState();
+            Player.SetState(Round);
+            Giant.SetState(Round);
             //3. 排定戰鬥順序
             Func<FightCharacter, FightCharacter, FightCharacter> findNowFighter = (a, b) =>
             {

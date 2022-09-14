@@ -228,7 +228,7 @@ namespace Console2048
             FightRoundUnit = 1 / Agile;
         }
 
-        internal override void SetState()
+        internal override void SetState(int round)
         {
             this.FightRoundUnit = 1000 / (Agile + 1);
             this.Attack = Power + Sword.AttackPoint;

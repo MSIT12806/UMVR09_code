@@ -59,6 +59,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="document\Issue.txt" />
     <Content Include="document\GameProgramDesign.txt" />
     <Content Include="document\GamePlaining.txt" />
   </ItemGroup>

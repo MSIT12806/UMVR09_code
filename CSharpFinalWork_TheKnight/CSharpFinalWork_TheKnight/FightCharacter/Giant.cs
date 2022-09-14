@@ -19,7 +19,6 @@ namespace Console2048
                 return ((int)(p.Attack * AttackBuff), 0);
             });
 
-            Hp = 1000;
             Name = "魔像";
 
         }
@@ -61,18 +60,20 @@ namespace Console2048
         }
 
 
-        internal override void SetState()
+        internal override void SetState(int round)
         {
-            Hp = 1000;
+            float level = 50 * ((11 - (float)round) / 10);
+            Hp = (int)level * 20;
 
-            FightRoundUnit = 1000 / 50 + 1;
-            this.Attack = 50;
-            this.速度 = Speed = 1000 / 50;
-            this.命中率 = 50 / 1000;
-            this.閃避率 = 50 / 1000;
-            this.格檔成功率 = 50 / 1000;
-            this.擊暈率 = 50 / 1000;
-            this.格檔發生率 = 50 / 1000;
+            FightRoundUnit = (int)(1000 / level + 1);
+            this.Attack = (int)level;
+            this.速度 = Speed = 1000 / level;
+            this.命中率 = level / 1000;
+            this.閃避率 = level / 1000;
+            this.格檔成功率 = level / 1000;
+            this.擊暈率 = level / 1000;
+            this.格檔發生率 = level / 1000;
+        
         }
 
         internal void ShowState()
