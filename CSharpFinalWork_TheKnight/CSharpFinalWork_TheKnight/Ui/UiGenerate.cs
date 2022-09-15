@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace Console2048
 {
     internal static class UiGenerate
     {
+        const int heightLimit = 37;
+        const int widthLimit = 140;
 
         const int plotX = 0;
         const int plotY = 0;
@@ -28,12 +31,13 @@ namespace Console2048
             Note
         }
         /// <summary>
-        /// 畫出內容。 回傳：client 的選擇(or -1) min is 1。
+        /// 畫出內容。 回傳：client 的選擇(or -1) min is 0。
         /// </summary>
         public static int RenderOut(bool clearWindow, WindowSelect window, params string[] lines)
         {
             int result = -1;
-            int y = -1, x=-1;
+            int y = -1, x = -1;
+            int maxX = -1, maxY = -1;
             if (clearWindow)
             {
                 Clear();
@@ -44,26 +48,64 @@ namespace Console2048
                 case WindowSelect.Plot:
                     y = plotY;
                     x = plotX;
+                    maxX = noteX - 1;
+                    maxY = noteY - 1;
                     break;
                 case WindowSelect.Menu: //注意
                     y = menuY;
                     x = menuX;
-                    result = UiHelper.SetMenu(menuY, menuX, lines);
-                    return result;
+                    maxX = noteX - 1;
+                    maxY = heightLimit - 1;
+                    break;
                 case WindowSelect.State:
                     y = stateY;
                     x = stateX;
+                    maxX = widthLimit - 1;
+                    maxY = noteY - 1;
                     break;
                 case WindowSelect.Note:
                     y = noteY;
                     x = noteX;
+                    maxX = widthLimit - 1;
+                    maxY = heightLimit - 1;
                     break;
             }
-            foreach (var item in lines)
+            List<string> linesFixed = new List<string>();
+            for (int i = 0; i < lines.Length; i++)
             {
-                SetCursorPosition(x, y);
-                WriteLine(item);
-                y++;
+                string a = "";
+                string b = "";
+                int byteLength = Encoding.Default.GetByteCount(lines[i]);
+                if (byteLength > maxX)
+                {
+                    a = SubStringByByte(lines[i], 0, maxX);
+                    b = SubStringByByte(lines[i], maxX, byteLength - maxX);
+                    linesFixed.Add(a);
+                    linesFixed.Add(b);
+                }
+                else
+                {
+                    a = lines[i];
+                    linesFixed.Add(a);
+                }
+            }
+            if (linesFixed.Count > maxY)
+            {
+                throw new Exception("超出顯示限制");
+            }
+
+            if (window == WindowSelect.Menu)
+            {
+                result = UiHelper.SetMenu(menuY, menuX, linesFixed.ToArray());
+            }
+            else
+            {
+                foreach (var item in linesFixed)
+                {
+                    SetCursorPosition(x, y);
+                    WriteLine(item);
+                    y++;
+                }
             }
             return result;
         }
@@ -90,8 +132,32 @@ namespace Console2048
         private static void DefaultPattern()
         {
             UiHelper.SetConsoleWindowSize(UiHelper.WindowSize.median);
-            UiHelper.DrawVerticalLine(0, 90, 37);
-            UiHelper.DrawHorizontalLine(0, 25, 140);
+            UiHelper.DrawVerticalLine(0, 90, heightLimit);
+            UiHelper.DrawHorizontalLine(0, 25, widthLimit);
+        }
+
+        private static string SubStringByByte(string str, int start, int length)
+        {
+            int len = length;
+            int byteCount = System.Text.Encoding.Default.GetByteCount(str);
+            //修改最大長度，防止溢位
+            if (len > byteCount)
+            {
+                len = byteCount;
+            }
+            var strBytes = System.Text.Encoding.Default.GetBytes(str);
+            string substr = System.Text.Encoding.Default.GetString(strBytes, start, len);
+            //對於半個中文字元的特殊處理
+            if (substr.EndsWith("?"))
+            {
+                //判斷原字串是否包含問號
+                var c = str.Substring(substr.Length - 1, 1);
+                if (!c.Equals("?"))
+                {
+                    substr = substr.Substring(0, substr.Length - 1);
+                }
+            }
+            return substr;
         }
     }
 }
