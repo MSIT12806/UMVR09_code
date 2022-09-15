@@ -1,0 +1,23 @@
+﻿規劃一個有帳號控管的console聊天室
+
+1. client 端 用 cmd 連線
+1.1 安裝TelnetClient：http://sharedderrick.blogspot.com/2017/09/install-telnet-client-telnet.html
+1.2 指令：telnet ip port
+
+2. server 端 用多線程 支援多名使用者連線
+2.1 主線程(1)：監控連線與斷線
+2.2 副線程(多)：驗證登入
+2.3 副線程(多)：接收輸入訊號
+
+3. 登入
+3.1 目前寫死在server 程式的資料存儲結構中
+3.2 string[] accounts
+3.3 驗證方法：在登入環節輸入正確的帳號，即可綁定該帳號。
+3.4 每個帳號只能有一個使用者登入。
+3.5 若帳號驗證三次不通過，則中斷連線。
+
+4. 接收輸入訊號
+4.1 全頻廣播
+4.2 私頻廣播
+4.3 json
+

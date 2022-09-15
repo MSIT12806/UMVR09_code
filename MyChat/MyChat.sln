@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatCore", "ChatCore\ChatCore.csproj", "{E8112BEB-38F8-4E37-9111-4ABA9E26CE94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatServer", "ChatServer\ChatServer.csproj", "{6F12FF93-BEB5-4D59-9D4E-B08C3C02E52E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "ChatClient\ChatClient.csproj", "{AF2E83F6-1CB7-4C19-8423-171FB1ED34BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8112BEB-38F8-4E37-9111-4ABA9E26CE94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8112BEB-38F8-4E37-9111-4ABA9E26CE94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8112BEB-38F8-4E37-9111-4ABA9E26CE94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8112BEB-38F8-4E37-9111-4ABA9E26CE94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F12FF93-BEB5-4D59-9D4E-B08C3C02E52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F12FF93-BEB5-4D59-9D4E-B08C3C02E52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F12FF93-BEB5-4D59-9D4E-B08C3C02E52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F12FF93-BEB5-4D59-9D4E-B08C3C02E52E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2E83F6-1CB7-4C19-8423-171FB1ED34BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2E83F6-1CB7-4C19-8423-171FB1ED34BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2E83F6-1CB7-4C19-8423-171FB1ED34BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2E83F6-1CB7-4C19-8423-171FB1ED34BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DF23E27-788E-4E03-951E-5FAB485E5AD6}
+	EndGlobalSection
+EndGlobal
