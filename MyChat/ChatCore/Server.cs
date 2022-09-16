@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
 namespace ChatCore
@@ -85,14 +86,6 @@ namespace ChatCore
             }
         }
 
-        private void Login(Client client)
-        {
-            if (!client.HasAcccount)
-            {
-                Send($"請進行登入", client.tcpClient);
-            }
-
-        }
 
         public Dictionary<string, Client> GetClients()
         {
@@ -133,14 +126,106 @@ namespace ChatCore
             var stream = client.GetStream();
             var buffer = new byte[numBytes];
             var bytesRead = stream.Read(buffer, 0, numBytes);
-
             var request = System.Text.Encoding.UTF8.GetString(buffer.Take(bytesRead).ToArray());
             //......
-            //if (request.StartsWith("-login", StringComparison.CurrentCultureIgnoreCase))
-            //{
-            //    Login();
-            //}
-            //else if()
+            if (request.StartsWith("-h", StringComparison.CurrentCultureIgnoreCase))
+            {
+                SendHelp(client);
+            }
+            else if (request.StartsWith("-login", StringComparison.CurrentCultureIgnoreCase))
+            {
+                Login(client, request);
+            }
+            else if (request.StartsWith("-logout", StringComparison.CurrentCultureIgnoreCase))
+            {
+                Logout(client);
+            }
+            else if (request.StartsWith("-exit", StringComparison.CurrentCultureIgnoreCase))
+            {
+                Exit(client);
+            }
+            else if (request.StartsWith("-members", StringComparison.CurrentCultureIgnoreCase))
+            {
+                ShowMembers(client);
+            }
+            else if (request.StartsWith("--to", StringComparison.CurrentCultureIgnoreCase))
+            {
+                SendToSomeone(client, request);
+            }
+            else if (request.StartsWith("--", StringComparison.CurrentCultureIgnoreCase))
+            {
+                Send("無效的指令。", client);
+            }
+            else
+            {
+                Broadcast(request);
+            }
+        }
+
+        private void Broadcast(string msg)
+        {
+            lock (clients)
+            {
+                foreach (var item in clients.Values)
+                {
+                    Send(msg, item.tcpClient);
+                }
+            }
+        }
+
+        private void SendToSomeone(TcpClient client, string request)
+        {
+            Send("悄悄話：[" + request + "]", client);
+        }
+
+        private void ShowMembers(TcpClient client)
+        {
+            StringBuilder st = new StringBuilder();
+            lock (clients)
+            {
+
+                foreach (var item in clients.Values)
+                {
+                    st.Append(item.Name + "/n");
+                }
+            }
+            Send(st.ToString(), client);
+        }
+
+        private void Exit(TcpClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Logout(TcpClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Login(TcpClient client, string request)
+        {
+            string[] command = request.Split(new string[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
+            if (command.Length != 2)
+            {
+                Send("指令錯誤", client);
+                return;
+            }
+
+
+            string username = accounts.Contains(command[1]) ? command[1] : "";
+            if (username == "")
+            {
+                Send($"錯誤：帳號不存在。", client);
+                return;
+            }
+
+
+            string ip = client.Client.RemoteEndPoint.ToString();
+
+            Client c = null;
+            clients.TryGetValue(ip, out c);
+            c.Name = username;
+            Send($"{username}登入成功", client);
         }
 
         void Send(string msg, TcpClient client)
