@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -7,15 +8,15 @@ namespace ChatClient
 {
     public class Client
     {
-        private TcpClient client = new TcpClient();
+        private TcpClient me = new TcpClient();
         bool @continue = true;
         public void Connect(string hostIP, int port)
         {
             Console.WriteLine("Connecting to chat server {0}:{1}", hostIP, port);
 
-            client.Connect(hostIP, port);
+            me.Connect(hostIP, port);
 
-            if (!client.Connected)
+            if (!me.Connected)
             {
                 Console.WriteLine("Can't Connect to chat server");
                 return;
@@ -32,7 +33,7 @@ namespace ChatClient
                 Console.WriteLine("Say something to server...");
                 string msg = Console.ReadLine();
                 if (msg != "-e")
-                    Send(client, msg);
+                    Send(me, msg);
                 else
                     DisConnect();
 
@@ -41,9 +42,9 @@ namespace ChatClient
         public void DisConnect()
         {
             @continue = false;
-            if (client.Connected)
+            if (me.Connected)
             {
-                client.Close();
+                me.Close();
             }
         }
         private void Send(TcpClient client, string msg)
@@ -60,7 +61,7 @@ namespace ChatClient
         {
             for (int i = 0; i < 10; i++)
             {
-                Send(client, "HiHi" + i);
+                Send(me, "HiHi" + i);
                 Thread.Sleep(1000);
             }
         }
@@ -68,14 +69,14 @@ namespace ChatClient
         {
             while (true)
             {
-                lock (client)
+                lock (me)
                 {
 
                     try
                     {
-                        if (client.Available > 0)
+                        if (me.Available > 0)
                         {
-                            Receive(client);
+                            Receive(me);
                         }
                     }
                     catch (Exception e)
@@ -96,9 +97,8 @@ namespace ChatClient
             var stream = client.GetStream();
             var buffer = new byte[numBytes];
             var bytesRead = stream.Read(buffer, 0, numBytes);
-
-            var request = System.Text.Encoding.ASCII.GetString(buffer).Substring(0, bytesRead);
-            Console.WriteLine("Server: " + request);
+            var request = System.Text.Encoding.UTF8.GetString(buffer.Take(bytesRead).ToArray());
+            Console.WriteLine( request);
         }
     }
     internal class Program
