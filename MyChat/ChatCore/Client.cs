@@ -13,7 +13,7 @@ namespace ChatCore
         public string Psw;
         public bool HasAcccount { get {  return Server.accounts.Contains(Name); } }
         public bool IsLogin { get { return Server.accounts.Contains(Name); } }
-        const string defaultName = "unknown";
+        public static readonly string defaultName = "unknown";
         public Client(string name, TcpClient client)
         {
             this.Name = name;

@@ -158,28 +158,61 @@ namespace ChatCore
             }
             else
             {
-                Broadcast(request);
+                Broadcast(request, client);
             }
         }
 
-        private void Broadcast(string msg)
+        private void Broadcast(string msg, TcpClient client)
         {
+
+            #region 登入驗證
+            Client c = clients[client.Client.RemoteEndPoint.ToString()];
+            if (c.Name == Client.defaultName)
+            {
+                Send("尚未登入，此命令無法執行。", client);
+                return;
+            }
+            #endregion
             lock (clients)
             {
                 foreach (var item in clients.Values)
                 {
-                    Send(msg, item.tcpClient);
+                    try
+                    {
+                        Send(clients[client.Client.RemoteEndPoint.ToString()].Name + ": " + msg, item.tcpClient);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
                 }
             }
         }
 
         private void SendToSomeone(TcpClient client, string request)
         {
+
+            #region 登入驗證
+            Client c = clients[client.Client.RemoteEndPoint.ToString()];
+            if (c.Name == Client.defaultName)
+            {
+                Send("尚未登入，此命令無法執行。", client);
+                return;
+            }
+            #endregion
             Send("悄悄話：[" + request + "]", client);
         }
 
         private void ShowMembers(TcpClient client)
         {
+            #region 登入驗證
+            Client c = clients[client.Client.RemoteEndPoint.ToString()];
+            if (c.Name == Client.defaultName)
+            {
+                Send("尚未登入，此命令無法執行。", client);
+                return;
+            }
+            #endregion
             StringBuilder st = new StringBuilder();
             lock (clients)
             {
@@ -194,12 +227,19 @@ namespace ChatCore
 
         private void Exit(TcpClient client)
         {
-            throw new NotImplementedException();
+            Send("bye.", client);
+            client.Close();
+            lock (clients)
+            {
+                clients.Remove(client.Client.RemoteEndPoint.ToString());
+            }
         }
 
         private void Logout(TcpClient client)
         {
-            throw new NotImplementedException();
+            Send("您已登出。", client);
+            var c = clients[client.Client.RemoteEndPoint.ToString()];
+            c.Name = Client.defaultName;
         }
 
         private void Login(TcpClient client, string request)
