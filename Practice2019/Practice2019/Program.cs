@@ -4,52 +4,10 @@ namespace Practice02
 {
     internal class Program
     {
-        /*作業三：
-         * 試在Main程式區段中解決以下情境: 企劃設計一個遊戲控制機制
-         * 10隻怪物擁有血量(mHp)、最大血量(mMaxHp)、經驗值(mExp)、50%機率掉落炸彈(編號1，不堆疊，對目標造成100傷害)、目前狀態(mState, 0→滿血 1→失血 2→死亡)
-         * 玩家擁有力量(pSt)、經驗值(pExp)、包包(pBag 數量上限 10)。
-         * 
-         * 當玩家按下’0’ 後通過”再次確認”機制後結束遊戲
-         * 當玩家按下’1’ 時顯示玩家狀態(力、經驗、包包每格內容)           ===>狀態檢視
-         * 當玩家按下’2’ 進入選怪(確認後顯示該怪物資訊)                  ===> 進入戰鬥場景
-         * 當按下’3’時，對選擇怪物造成傷害(力量值)
-         * 如果選擇怪物此時死亡→玩家經驗值與包包物品依怪物設定增加
-         * 如果沒有死亡→顯示攻擊扣傷等字串
-         * 當按下’4’時使用包包內炸彈對選擇怪物造成傷害(後續處理同上)
-         * 
-         * 依據各自遊戲數值區間經驗，自行宣告酷炫屬性名稱並給定屬性值
-         * 設計包包、選怪的容錯處理
-         * 機率可暫用每打兩隻掉一個取代
-         */
-
-        /*作業四：
-         * 使用類別改寫作業 3
-         * 需使用分檔方式
-         * 數值可改用隨機方式或檔案載入方式產生
-         * 一樣要注意系統架構
-         * 進階  單例 – Singleton （不要Google努力自己猜看看）
-         * 遊戲有需要一個獨一無二的資源管理器(GameMaster)，可快速、方便讓所成員函式查找目前遊戲狀態下資運，如怪物清單、玩家清單、關卡資訊等等
-         * 使用目前為止所學，設計 GameMaster 類別，使其只能被配置一次、有方便的取得物件方法，未來以應用於上述情境
-         */
         static bool doItAgain = true;
         static void Main(string[] args)
         {
-            GameManager.GameStart();
-
-            while (doItAgain)
-            {
-                switch (GameManager.roundState)
-                {
-                    case GameManager.RoundState.一般:
-                        ShowMainMenu();
-                        Console.Write("請輸入文字：");
-                        ResponseForMainMenu(Console.ReadKey());
-                        break;
-                    case GameManager.RoundState.戰鬥:
-                        FightingMenu();
-                        break;
-                }
-            }
+            
         }
         public static void Pause()
         {
