@@ -57,10 +57,9 @@ namespace Console2048
         public override Sword Sword { get; protected set; }
         public override Shield Shield { get; protected set; }
         public override int Attack { get; set; }
-        public override float 閃避率 { get; set; }
-        public override float 擊暈率 { get; set; }
-        public override float 格檔發生率 { get; set; }
-        public override float 格檔成功率 { get; set; }
+        public override float Avoid { get; set; }
+        public override float Stun { get; set; }
+        public override float Collide { get; set; }
 
         internal void ShowDistribute()
         {
@@ -218,7 +217,7 @@ namespace Console2048
                 Skills.Add("暗隱伏擊", p =>
                 {
                     p.Stamina -= 1;
-                    p.擊暈率 *= 3;
+                    p.Stun *= 3;
                     return (0, 3);
                 });
             }
@@ -234,10 +233,9 @@ namespace Console2048
             this.FightRoundUnit = 1000 / (Agile + 1);
             this.Attack = Power + Sword.AttackPoint;
             this.Speed = 1000 / (Agile + 1);
-            this.閃避率 = Agile / 1000;
-            this.格檔成功率 = Power / 1000;
-            this.擊暈率 = Power / 1000;
-            this.格檔發生率 = Agile / 1000;
+            this.Avoid = Agile / 1000;
+            this.Collide = Power / 1000;
+            this.Stun = Power / 1000;
         }
 
         #endregion
@@ -251,10 +249,10 @@ namespace Console2048
             UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "請選擇對象");
             int targetIdx = UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "魔像", "自己");
             FightCharacter t = targetIdx == 0 ? opponent : this;
-            nowFightContext.Add($"{this.Name} 對 {t.Name} 施展 {skillsKeyArray[skillIndex]}");
+            NowFightContext.Add($"{this.Name} 對 {t.Name} 施展 {skillsKeyArray[skillIndex]}");
             int damage = Move(t, skillsKeyArray[skillIndex]);
 
-            nowFightContext.Add(t.GetHurt(damage));
+            NowFightContext.Add(t.GetHurt(damage));
             int Move(FightCharacter target, string skillName)
             {
                 //注入玩家選擇的技能，並回傳值。
@@ -291,10 +289,9 @@ namespace Console2048
             builder.Add($"力竭:{Stamina}");
             builder.Add($"速度:{Speed}");
             builder.Add($"攻擊力：{Attack}");
-            builder.Add($"閃避率：{閃避率}");
-            builder.Add($"擊暈率：{擊暈率}");
-            builder.Add($"格檔發生率：{格檔發生率}");
-            builder.Add($"格檔成功率：{格檔成功率}");
+            builder.Add($"閃避率：{Avoid}");
+            builder.Add($"擊暈率：{Stun}");
+            builder.Add($"格檔成功率：{Collide}");
             builder.Add("");
             builder.Add($"狀態：");
             builder.AddRange(NowBuffs.Select(i => i.Item1).ToArray());

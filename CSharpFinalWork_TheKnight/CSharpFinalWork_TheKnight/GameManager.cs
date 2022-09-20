@@ -101,8 +101,8 @@ namespace CSharpFinalWork_TheKnight
                 else
                     Giant.RandomSkill();
 
-                fightProcess.AddRange(nowFighter.nowFightContext);
-                nowFighter.nowFightContext.Clear();
+                fightProcess.AddRange(nowFighter.NowFightContext);
+                nowFighter.NowFightContext.Clear();
             }
             if (Player.Stamina <= 0 || Player.Hp <= 0)
                 win = false;

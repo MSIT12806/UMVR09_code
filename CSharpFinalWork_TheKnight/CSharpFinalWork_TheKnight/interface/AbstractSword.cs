@@ -22,24 +22,31 @@ namespace Console2048
         protected Dictionary<string, ReleaseSkill> Skills;
 
         /// <summary>
-        /// 不想讓外部改到這個，所以回傳一個新的。
+        /// 取得本裝備的技能(不想讓外部改到這個，所以回傳一個新的)
         /// </summary>
         public Dictionary<string, ReleaseSkill> GetSkills()
         {
             return new Dictionary<string, ReleaseSkill>(Skills);
         }
-
+        /// <summary>
+        /// 所有裝備連動的技能都從sword整合。
+        /// </summary>
         protected virtual IEnumerable<string> AppendSkillsByShield()
         {
             return Skills.Keys;
         }
-
+        /// <summary>
+        /// 攻擊
+        /// </summary>
         protected virtual (int damage, int rounds) Attack(FightCharacter p)
         {
             _player.Stamina -= 1;
             return ((int)((_player.Attack + AttackPoint) * _player.AttackBuff), 0);
         }
     }
+    /// <summary>
+    /// 赤手空拳
+    /// </summary>
     internal class NoSword : Sword
     {
 
@@ -55,6 +62,9 @@ namespace Console2048
 
         public override string Name { get; } = "赤手空拳";
 
+        /// <summary>
+        /// 赤手空拳可得雙手盾相關技能
+        /// </summary>
         protected override IEnumerable<string> AppendSkillsByShield()
         {
             Shield shield = _player.Shield;
@@ -63,13 +73,13 @@ namespace Console2048
                 Skills.Add("固若金湯", p =>
                 {
                     p.Stamina -= 2;//雙手武器技能耐力值消耗*2
-                    p.格檔成功率 *= 10;
+                    p.Collide *= 10;
                     return (0, 5);
                 });
                 Skills.Add("天崩地裂", p =>
                 {
                     p.Stamina -= 5;
-                    p.格檔成功率 = 1;
+                    p.Collide = 1;
                     return (p.Attack, 0);
                 });
             }
@@ -77,6 +87,9 @@ namespace Console2048
             return Skills.Keys;
         }
     }
+    /// <summary>
+    /// 劍
+    /// </summary>
     internal class NormalSword : Sword
     {
         public override string Name { get; } = "劍";
@@ -91,6 +104,9 @@ namespace Console2048
             Skills.Add("普通砍擊", Attack);
         }
     }
+    /// <summary>
+    /// 利劍
+    /// </summary>
     internal class GoodSword : Sword
     {
         public override string Name { get; } = "利劍";
@@ -105,6 +121,9 @@ namespace Console2048
             Skills.Add("好的砍擊", Attack);
         }
     }
+    /// <summary>
+    /// 精良利劍
+    /// </summary>
     internal class NiceSword : Sword
     {
         public override string Name { get; } = "精良利劍";
@@ -126,6 +145,9 @@ namespace Console2048
                 });
         }
     }
+    /// <summary>
+    /// 雙手劍
+    /// </summary>
     internal class TwoHandSword : Sword
     {
         public override string Name { get; } = "雙手劍";

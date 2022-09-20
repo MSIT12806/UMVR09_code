@@ -34,10 +34,9 @@ namespace Console2048
         public override float Stamina { get; set; }
         public override int Attack { get; set; }
         public override float Speed { get; set; }
-        public override float 閃避率 { get; set; }
-        public override float 擊暈率 { get; set; }
-        public override float 格檔發生率 { get; set; }
-        public override float 格檔成功率 { get; set; }
+        public override float Avoid { get; set; }
+        public override float Stun { get; set; }
+        public override float Collide { get; set; }
 
         internal void RandomSkill()
         {
@@ -46,12 +45,12 @@ namespace Console2048
             var skill = Skills[Skills.Keys.ToArray()[skillIdx]];
 
 
-            nowFightContext.Add($"{this.Name} 對 {opponent.Name} 施展 {Skills.Keys.ToArray()[skillIdx]}");
+            NowFightContext.Add($"{this.Name} 對 {opponent.Name} 施展 {Skills.Keys.ToArray()[skillIdx]}");
 
             (int d, int r) = skill(opponent);
             if (r > 0)
                 NowBuffs.Enqueue((Skills.Keys.ToArray()[skillIdx], r - 1, opponent));
-            nowFightContext.Add(opponent.GetHurt(d));
+            NowFightContext.Add(opponent.GetHurt(d));
 
         }
 
@@ -64,10 +63,9 @@ namespace Console2048
             FightRoundUnit = (int)(1000 / level + 1);
             this.Attack = (int)level;
             this.Speed = Speed = 1000 / level;
-            this.閃避率 = level / 1000;
-            this.格檔成功率 = level / 1000;
-            this.擊暈率 = level / 1000;
-            this.格檔發生率 = level / 1000;
+            this.Avoid = level / 1000;
+            this.Collide = level / 1000;
+            this.Stun = level / 1000;
         
         }
 
@@ -79,10 +77,9 @@ namespace Console2048
             builder.Add($"力竭:{Stamina}");
             builder.Add($"速度:{Speed}");
             builder.Add($"攻擊力：{Attack}");
-            builder.Add($"閃避率：{閃避率}");
-            builder.Add($"擊暈率：{擊暈率}");
-            builder.Add($"格檔發生率：{格檔發生率}");
-            builder.Add($"格檔成功率：{格檔成功率}");
+            builder.Add($"閃避率：{Avoid}");
+            builder.Add($"擊暈率：{Stun}");
+            builder.Add($"格檔成功率：{Collide}");
             builder.Add("");
             builder.Add($"狀態：");
             builder.AddRange(NowBuffs.Select(i => i.Item1).ToArray());

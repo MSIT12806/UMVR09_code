@@ -33,46 +33,68 @@ namespace Console2048
         public abstract Shield Shield { protected set; get; }
         public abstract int Attack { set; get; }
 
-        public void 擊暈判定(float incidence)
-        {
-            Random random = new Random();
-            int v = random.Next(0, 100);
-            if (v < incidence * 100)
-            {
-                NowBuffs.Enqueue(("被擊暈", 5, this));
-            }
-            else { }
-        }
+        //public void 擊暈判定(float incidence)
+        //{
+        //    Random random = new Random();
+        //    int v = random.Next(0, 100);
+        //    if (v < incidence * 100)
+        //    {
+        //        NowBuffs.Enqueue(("被擊暈", 5, this));
+        //    }
+        //    else { }
+        //}
 
-        public abstract float 閃避率 { set; get; }
-        public abstract float 擊暈率 { set; get; }
-        public abstract float 格檔發生率 { set; get; }
-        public abstract float 格檔成功率 { set; get; }
+        public abstract float Avoid { set; get; }
+        public abstract float Stun { set; get; }
+        public abstract float Collide { set; get; }
 
         public string GetHurt(int r)
         {
+            //閃避
             Random random = new Random();
             int p = random.Next(1, 1000);
             int d = 0;
-            if(p< 閃避率 * 1000)
+            if (p < Avoid * 1000)
             {
                 return $"{this.Name} 閃避了這次攻擊";
             }
+
+            //格檔
+            string block = "";
+            if (Shield != null)
+            {
+                d = Shield.Defense(d);
+                block = $"${this.Name}擋住了部分傷害，";
+            }
+            //傷害計算
             if (Shield != null)
                 d = r - Shield.DefensePoint;
             else
                 d = r;
-            Hp -= d;
-            if (d == 0) return "";
 
-            return $"對 {this.Name} 造成 {d} 點 傷害";
+            Hp -= d;
+            if (d == 0) return block + "本次攻擊沒有造成任何傷害";
+
+            return block + $"對 {this.Name} 造成 {d} 點 傷害";
         }
 
         //戰鬥增益屬性，因增益有作用回合數，所以之後要能變回原本狀態
+        /// <summary>
+        /// 攻擊力加成
+        /// </summary>
         public float AttackBuff { set; get; }
+        /// <summary>
+        /// 防禦力加成
+        /// </summary>
         public float DefenceBuff { set; get; }
+        /// <summary>
+        /// 速度加乘
+        /// </summary>
         public float SpeedBuff { set; get; }
-        public float 閃避率Buff { set; get; }
+        /// <summary>
+        /// 閃避率加成
+        /// </summary>
+        public float AvoidBuff { set; get; }
         /// <summary>
         /// 擊暈率加乘
         /// </summary>
@@ -80,13 +102,13 @@ namespace Console2048
         /// <summary>
         /// 格擋發生率加乘
         /// </summary>
-        public float BlockBuff { set; get; }
-        public List<string> nowFightContext = new List<string>();
+        public float CollideBuff { set; get; }
+        public List<string> NowFightContext = new List<string>();
         internal abstract void SetState(int round);
         internal virtual void ResetState()
         {
             AttackBuff = SpeedBuff = 1;
-            閃避率Buff = StunBuff = BlockBuff = 0;
+            AvoidBuff = StunBuff = CollideBuff = 0;
         }
         protected Queue<(string, int, FightCharacter target)> NowBuffs { get; } = new Queue<(string, int, FightCharacter target)>();
         public void SetBuffAndUseSkill()
