@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace CSharpFinalWork_TheKnight
 {
@@ -91,6 +92,7 @@ namespace CSharpFinalWork_TheKnight
                 nowFighter.FightRoundPoint += nowFighter.FightRoundUnit;
                 ////輪到魔像的基本AI
                 ////輪到玩家的攻擊選擇
+                Thread.Sleep(2000);
                 ResetState();
                 nowFighter.SetBuffAndUseSkill();
 

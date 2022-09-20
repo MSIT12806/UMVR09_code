@@ -32,7 +32,6 @@ namespace Console2048
         public abstract Sword Sword { protected set; get; }
         public abstract Shield Shield { protected set; get; }
         public abstract int Attack { set; get; }
-        public abstract float 速度 { set; get; }
 
         public void 擊暈判定(float incidence)
         {
@@ -45,35 +44,49 @@ namespace Console2048
             else { }
         }
 
-        public abstract float 命中率 { set; get; }
         public abstract float 閃避率 { set; get; }
         public abstract float 擊暈率 { set; get; }
         public abstract float 格檔發生率 { set; get; }
         public abstract float 格檔成功率 { set; get; }
 
-        public void GetHurt(int r)
+        public string GetHurt(int r)
         {
+            Random random = new Random();
+            int p = random.Next(1, 1000);
+            int d = 0;
+            if(p< 閃避率 * 1000)
+            {
+                return $"{this.Name} 閃避了這次攻擊";
+            }
             if (Shield != null)
-                Hp -= r - Shield.DefensePoint;
+                d = r - Shield.DefensePoint;
             else
-                Hp -= r;
+                d = r;
+            Hp -= d;
+            if (d == 0) return "";
+
+            return $"對 {this.Name} 造成 {d} 點 傷害";
         }
 
         //戰鬥增益屬性，因增益有作用回合數，所以之後要能變回原本狀態
         public float AttackBuff { set; get; }
-        public float 防禦力Buff { set; get; }
-        public float 速度Buff { set; get; }
-        public float 命中率Buff { set; get; }
+        public float DefenceBuff { set; get; }
+        public float SpeedBuff { set; get; }
         public float 閃避率Buff { set; get; }
-        public float 擊暈率Buff { set; get; }
-        public float 格檔發生率Buff { set; get; }
-        public float 格檔成功率Buff { set; get; }
+        /// <summary>
+        /// 擊暈率加乘
+        /// </summary>
+        public float StunBuff { set; get; }
+        /// <summary>
+        /// 格擋發生率加乘
+        /// </summary>
+        public float BlockBuff { set; get; }
         public List<string> nowFightContext = new List<string>();
         internal abstract void SetState(int round);
         internal virtual void ResetState()
         {
-            AttackBuff = 速度Buff = 1;
-            命中率Buff = 閃避率Buff = 擊暈率Buff = 格檔成功率Buff = 格檔發生率Buff = 0;
+            AttackBuff = SpeedBuff = 1;
+            閃避率Buff = StunBuff = BlockBuff = 0;
         }
         protected Queue<(string, int, FightCharacter target)> NowBuffs { get; } = new Queue<(string, int, FightCharacter target)>();
         public void SetBuffAndUseSkill()

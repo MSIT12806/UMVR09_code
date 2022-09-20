@@ -72,10 +72,6 @@
       <Project>{9c9023ae-e57c-4b21-86aa-dfb9d3432ec1}</Project>
       <Name>ConsoleUiHelper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataStruct\DataStruct.csproj">
-      <Project>{01f13fee-ceba-41da-aee9-c2740165849b}</Project>
-      <Name>DataStruct</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

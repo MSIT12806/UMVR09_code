@@ -57,8 +57,6 @@ namespace Console2048
         public override Sword Sword { get; protected set; }
         public override Shield Shield { get; protected set; }
         public override int Attack { get; set; }
-        public override float 速度 { get; set; }
-        public override float 命中率 { get; set; }
         public override float 閃避率 { get; set; }
         public override float 擊暈率 { get; set; }
         public override float 格檔發生率 { get; set; }
@@ -149,19 +147,19 @@ namespace Console2048
             Stamina = Endurance;
             Speed = Stamina;
 
-            //gen sword
+            //gen Shield
             if (ShieldPoint > 35 && SwordPoint <= 0)
                 Shield = new SuperHeavyShield(this);
             else if (ShieldPoint > 35)
                 Shield = new HeavyShield(this);
-            else if (SwordPoint > 20)
+            else if (ShieldPoint > 20)
                 Shield = new NiceShield(this);
             else if (ShieldPoint > 0)
                 Shield = new NormalShield(this);
             else
                 Shield = new NoShield(this);
 
-            //gen shield
+            //gen Sword
             if (SwordPoint > 35 && ShieldPoint <= 0)
                 Sword = new TwoHandSword(this);
             else if (SwordPoint > 35)
@@ -179,6 +177,7 @@ namespace Console2048
 
         private void GetSkills()
         {
+            //from gears
             foreach (var item in Shield.GetSkills())
             {
                 if (!Skills.ContainsKey(item.Key))
@@ -192,7 +191,9 @@ namespace Console2048
                     Skills.Add(item.Key, item.Value);
                 else
                     throw new Exception("技能名稱出現重複");
-            }            //set skill when property arrived.
+            }   
+
+            //from property
             if (this.Power >= 35)
             {
                 Skills.Add("勢如破竹", p =>
@@ -232,8 +233,7 @@ namespace Console2048
         {
             this.FightRoundUnit = 1000 / (Agile + 1);
             this.Attack = Power + Sword.AttackPoint;
-            this.速度 = 1000 / (Agile + 1);
-            this.命中率 = Agile / 1000;
+            this.Speed = 1000 / (Agile + 1);
             this.閃避率 = Agile / 1000;
             this.格檔成功率 = Power / 1000;
             this.擊暈率 = Power / 1000;
@@ -254,9 +254,7 @@ namespace Console2048
             nowFightContext.Add($"{this.Name} 對 {t.Name} 施展 {skillsKeyArray[skillIndex]}");
             int damage = Move(t, skillsKeyArray[skillIndex]);
 
-            t.GetHurt(damage);
-            if (damage > 0)
-                nowFightContext.Add($" 對 {t.Name} 造成 {damage} 點 傷害");
+            nowFightContext.Add(t.GetHurt(damage));
             int Move(FightCharacter target, string skillName)
             {
                 //注入玩家選擇的技能，並回傳值。
@@ -293,7 +291,6 @@ namespace Console2048
             builder.Add($"力竭:{Stamina}");
             builder.Add($"速度:{Speed}");
             builder.Add($"攻擊力：{Attack}");
-            builder.Add($"命中率：{命中率}");
             builder.Add($"閃避率：{閃避率}");
             builder.Add($"擊暈率：{擊暈率}");
             builder.Add($"格檔發生率：{格檔發生率}");
