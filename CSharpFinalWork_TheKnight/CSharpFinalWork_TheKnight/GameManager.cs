@@ -9,16 +9,13 @@ namespace CSharpFinalWork_TheKnight
     /// <summary>
     /// 生成遊戲用的物件、管理遊戲流程等。
     /// </summary>
-    internal class GameManager
+    public class GameManager
     {
         Player Player { get; set; }
         Giant Giant { get; set; }
-        public int Round { get; set; } = 2;
+        public int Round { get; set; }
         bool win = false;
         List<string> fightProcess = new List<string>();
-        public GameManager()
-        {
-        }
         public void Game()
         {
             while (!win)
@@ -38,7 +35,7 @@ namespace CSharpFinalWork_TheKnight
         }
 
 
-        internal void Start()
+        public void Start()
         {
             UiGenerate.RenderOut(true, UiGenerate.WindowSelect.Plot, "是否觀看劇情？");
             if (UiGenerate.RenderOut(false, UiGenerate.WindowSelect.Menu, "是", "否") == 0)
@@ -53,7 +50,7 @@ namespace CSharpFinalWork_TheKnight
             Giant = new Giant();
 
         }
-        internal void SetPlayer()
+        public void SetPlayer()
         {
             //產生一個Player 物件
             var player = new Player();
@@ -63,7 +60,7 @@ namespace CSharpFinalWork_TheKnight
             Player = player;
         }
 
-        internal void Fight()
+        public void Fight()
         {
             //前置作業
 
@@ -93,8 +90,8 @@ namespace CSharpFinalWork_TheKnight
                 ////輪到魔像的基本AI
                 ////輪到玩家的攻擊選擇
                 Thread.Sleep(2000);
-                ResetState();
-                nowFighter.SetBuffAndUseSkill();
+                nowFighter.ResetState();
+                nowFighter.SetBuff();
 
                 if (nowFighter == Player)
                     Player.SelectSkill();
@@ -109,11 +106,6 @@ namespace CSharpFinalWork_TheKnight
             else if (Giant.Hp <= 0)
                 win = true;
 
-            void ResetState()
-            {
-                Player.ResetState();
-                Giant.ResetState();
-            }
         }
 
         private bool End()
