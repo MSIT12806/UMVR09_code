@@ -165,14 +165,14 @@ namespace ChatCore
         private void Broadcast(string msg, TcpClient client)
         {
 
-            #region 登入驗證
-            Client c = clients[client.Client.RemoteEndPoint.ToString()];
-            if (c.Name == Client.defaultName)
-            {
-                Send("尚未登入，此命令無法執行。", client);
-                return;
-            }
-            #endregion
+            //#region 登入驗證
+            //Client c = clients[client.Client.RemoteEndPoint.ToString()];
+            //if (c.Name == Client.defaultName)
+            //{
+            //    Send("尚未登入，此命令無法執行。", client);
+            //    return;
+            //}
+            //#endregion
             lock (clients)
             {
                 foreach (var item in clients.Values)
@@ -192,27 +192,27 @@ namespace ChatCore
         private void SendToSomeone(TcpClient client, string request)
         {
 
-            #region 登入驗證
-            Client c = clients[client.Client.RemoteEndPoint.ToString()];
-            if (c.Name == Client.defaultName)
-            {
-                Send("尚未登入，此命令無法執行。", client);
-                return;
-            }
-            #endregion
+            //#region 登入驗證
+            //Client c = clients[client.Client.RemoteEndPoint.ToString()];
+            //if (c.Name == Client.defaultName)
+            //{
+            //    Send("尚未登入，此命令無法執行。", client);
+            //    return;
+            //}
+            //#endregion
             Send("悄悄話：[" + request + "]", client);
         }
 
         private void ShowMembers(TcpClient client)
         {
-            #region 登入驗證
-            Client c = clients[client.Client.RemoteEndPoint.ToString()];
-            if (c.Name == Client.defaultName)
-            {
-                Send("尚未登入，此命令無法執行。", client);
-                return;
-            }
-            #endregion
+            //#region 登入驗證
+            //Client c = clients[client.Client.RemoteEndPoint.ToString()];
+            //if (c.Name == Client.defaultName)
+            //{
+            //    Send("尚未登入，此命令無法執行。", client);
+            //    return;
+            //}
+            //#endregion
             StringBuilder st = new StringBuilder();
             lock (clients)
             {
