@@ -45,25 +45,38 @@ namespace ConsoleApp1
 
         static string DepthFirstSearch(Node head, Node ans)
         {
+            /**
+             * 深度優先設計：
+             *一、思路：
+             *探詢一個節點下面的子節點，
+             *一路探詢到葉子，
+             *再往葉子的兄弟節點探詢。
+             *二：虛擬code：
+             *1. set arr is list.
+             *2. insert initial node to the front of arr.
+             *3. set n is first node on arr.
+             *4. if n is target node,
+             *4.1 then return n and path from the initial node to n.
+             *4.2 else remove n from arr and add n's children to the front of arr. and go to step3.
+             */
             int thisNodeNumber = 0;
-            StringBuilder sb = new StringBuilder();
-            RonStack<Node> stack = new RonStack<Node>();
-            Node n = head;
-            stack.Push(n);
-            while (n != ans)
+            RonLinkNode<Node> ansLink = new RonLinkNode<Node>();
+            RonStack<Node> list = new RonStack<Node>(); //1
+            list.Push(head);
+            bool isFind = false;
+            while (!isFind)
             {
-
-                n = stack.Pop();//s2
+                var n = list.Pop();//s2
                 if (n == ans)
                 {
                     return Match(n);
                 }
                 else
                 {
+                    ansLink.Next = n;
                     for (int i = 0; i < n.Children.Count; i++)
                     {
-                        thisNodeNumber = i;
-                        stack.Push(n.Children[i]);
+                        list.Push(n.Children[i]);
                     }
                 }
             }

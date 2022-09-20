@@ -34,8 +34,6 @@ namespace Console2048
         public override float Stamina { get; set; }
         public override int Attack { get; set; }
         public override float Speed { get; set; }
-        public override float 速度 { get; set; }
-        public override float 命中率 { get; set; }
         public override float 閃避率 { get; set; }
         public override float 擊暈率 { get; set; }
         public override float 格檔發生率 { get; set; }
@@ -53,10 +51,8 @@ namespace Console2048
             (int d, int r) = skill(opponent);
             if (r > 0)
                 NowBuffs.Enqueue((Skills.Keys.ToArray()[skillIdx], r - 1, opponent));
-            opponent.GetHurt(d);
+            nowFightContext.Add(opponent.GetHurt(d));
 
-            if (d > 0)
-                nowFightContext.Add($" 對 {opponent.Name} 造成 {d} 點 傷害");
         }
 
 
@@ -67,8 +63,7 @@ namespace Console2048
 
             FightRoundUnit = (int)(1000 / level + 1);
             this.Attack = (int)level;
-            this.速度 = Speed = 1000 / level;
-            this.命中率 = level / 1000;
+            this.Speed = Speed = 1000 / level;
             this.閃避率 = level / 1000;
             this.格檔成功率 = level / 1000;
             this.擊暈率 = level / 1000;
@@ -84,7 +79,6 @@ namespace Console2048
             builder.Add($"力竭:{Stamina}");
             builder.Add($"速度:{Speed}");
             builder.Add($"攻擊力：{Attack}");
-            builder.Add($"命中率：{命中率}");
             builder.Add($"閃避率：{閃避率}");
             builder.Add($"擊暈率：{擊暈率}");
             builder.Add($"格檔發生率：{格檔發生率}");

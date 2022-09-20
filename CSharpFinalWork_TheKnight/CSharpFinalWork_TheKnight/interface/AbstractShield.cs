@@ -34,7 +34,7 @@ namespace Console2048
         }
         public virtual (int damage, int rounds) Attack(FightCharacter target)
         {
-            target.擊暈判定(_player.擊暈率 + _player.擊暈率Buff);
+            target.擊暈判定(_player.擊暈率 + _player.StunBuff);
             return ((int)((_player.Attack + DefensePoint * 0.5f) * _player.AttackBuff), 0);
         }
 

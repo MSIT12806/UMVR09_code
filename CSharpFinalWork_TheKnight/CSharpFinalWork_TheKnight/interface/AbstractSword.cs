@@ -9,6 +9,9 @@ namespace Console2048
     public abstract class Sword
     {
         protected Player _player;
+        /// <summary>
+        /// 注入角色以取得其屬性，依據屬性會生成不同的技能。
+        /// </summary>
         public Sword(Player player)
         {
             _player = player;
@@ -39,6 +42,10 @@ namespace Console2048
     }
     internal class NoSword : Sword
     {
+
+        /// <summary>
+        /// 注入角色以取得其屬性，依據屬性會生成不同的技能。
+        /// </summary>
         public NoSword(Player player) : base(player)
         {
             AttackPoint = 0;
@@ -73,6 +80,10 @@ namespace Console2048
     internal class NormalSword : Sword
     {
         public override string Name { get; } = "劍";
+
+        /// <summary>
+        /// 注入角色以取得其屬性，依據屬性會生成不同的技能。
+        /// </summary>
         public NormalSword(Player player) : base(player)
         {
             AttackPoint = 10;
@@ -83,6 +94,10 @@ namespace Console2048
     internal class GoodSword : Sword
     {
         public override string Name { get; } = "利劍";
+
+        /// <summary>
+        /// 注入角色以取得其屬性，依據屬性會生成不同的技能。
+        /// </summary>
         public GoodSword(Player player) : base(player)
         {
             AttackPoint = 18;
@@ -93,6 +108,10 @@ namespace Console2048
     internal class NiceSword : Sword
     {
         public override string Name { get; } = "精良利劍";
+
+        /// <summary>
+        /// 注入角色以取得其屬性，依據屬性會生成不同的技能。
+        /// </summary>
         public NiceSword(Player player) : base(player)
         {
             AttackPoint = 28;
@@ -102,7 +121,7 @@ namespace Console2048
                 Skills.Add("精良狀態", t =>
                 {
                     _player.AttackBuff += 0.2f;
-                    _player.防禦力Buff += 20f;
+                    _player.DefenceBuff += 20f;
                     return (0, 5);
                 });
         }
@@ -115,6 +134,10 @@ namespace Console2048
             _player.Stamina -= 1;
             return base.Attack(target);
         }
+
+        /// <summary>
+        /// 注入角色以取得其屬性，依據屬性會生成不同的技能。
+        /// </summary>
         public TwoHandSword(Player player) : base(player)
         {
             AttackPoint = 40;
@@ -127,7 +150,7 @@ namespace Console2048
             });
             Skills.Add("以劍代盾", p =>
             {
-                p.防禦力Buff += p.Sword.AttackPoint * 0.8f;
+                p.DefenceBuff += p.Sword.AttackPoint * 0.8f;
                 return (0, 5);
             });
         }
