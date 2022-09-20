@@ -96,7 +96,7 @@ namespace Console2048
 
             if (window == WindowSelect.Menu)
             {
-                result = UiHelper.SetMenu(menuY, menuX, linesFixed.ToArray());
+                result = ConsoleUiHelper.SetMenu(menuY, menuX, linesFixed.ToArray());
             }
             else
             {
@@ -131,9 +131,9 @@ namespace Console2048
         /// </summary>
         private static void DefaultPattern()
         {
-            UiHelper.SetConsoleWindowSize(UiHelper.WindowSize.median);
-            UiHelper.DrawVerticalLine(0, 90, heightLimit);
-            UiHelper.DrawHorizontalLine(0, 25, widthLimit);
+            ConsoleUiHelper.SetConsoleWindowSize(ConsoleUiHelper.WindowSize.median);
+            ConsoleUiHelper.DrawVerticalLine(0, 90, heightLimit);
+            ConsoleUiHelper.DrawHorizontalLine(0, 25, widthLimit);
         }
 
         private static string SubStringByByte(string str, int start, int length)

@@ -7,8 +7,10 @@ using static System.Console;
 
 namespace Console2048
 {
-
-    public static class UiHelper
+    /// <summary>
+    /// 小黑窗的UI輔助類
+    /// </summary>
+    public static class ConsoleUiHelper
     {
         /// <summary>
         /// 畫直。
@@ -25,6 +27,17 @@ namespace Console2048
                 WriteLine(word);
             }
         }
+        /// <summary>
+        /// 畫橫
+        /// startYPosition：起始高度(min:0)。
+        /// xPosition：橫向位置(min:0)。
+        /// length： 長度 。
+        /// word： 畫的字元(預設:-) 。
+        /// </summary>
+        /// <param name="startXPosition"></param>
+        /// <param name="yPosition"></param>
+        /// <param name="length"></param>
+        /// <param name="word"></param>
         public static void DrawHorizontalLine(int startXPosition, int yPosition, int length, string word = "-")
         {
             SetCursorPosition(startXPosition, yPosition);
@@ -33,11 +46,26 @@ namespace Console2048
                 Write(word);
             }
         }
+        /// <summary>
+        /// 小黑窗尺寸
+        /// </summary>
         public enum WindowSize
         {
+            /// <summary>
+            /// 全螢幕
+            /// </summary>
             FullSize,
+            /// <summary>
+            /// 190X50
+            /// </summary>
             large,
+            /// <summary>
+            /// 140X37
+            /// </summary>
             median,
+            /// <summary>
+            /// 90X34
+            /// </summary>
             small
         }
         /// <summary>
@@ -63,11 +91,14 @@ namespace Console2048
         }
         static int oriX=-1;
         static int oriY=-1;
+        /// <summary>
+        /// 已有初始值
+        /// </summary>
         static bool HasOriginValue
         {
             get
             {
-                return (oriX >= 0 && oriY >= 0); //You are so smart!
+                return (oriX >= 0 && oriY >= 0); 
             }
         }
         static void LeaveOperation()
@@ -79,6 +110,9 @@ namespace Console2048
             }
         }
 
+        /// <summary>
+        /// 可用上下按鈕的選單效果
+        /// </summary>
         public static int SetMenu(int y, int x, params string[] operations)
         {
             int row = operations.Length;
