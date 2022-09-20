@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RonTools", "RonTools\RonToo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice2019", "..\Practice2019\Practice2019\Practice2019.csproj", "{9E2A3F29-4C97-4821-89EB-CA881F38F6C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9E2A3F29-4C97-4821-89EB-CA881F38F6C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E2A3F29-4C97-4821-89EB-CA881F38F6C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E2A3F29-4C97-4821-89EB-CA881F38F6C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
