@@ -2,5 +2,8 @@ GameAI 開發文件
 
 1. 深度優先
 2. 廣度優先
+>> 實作MaxTree
+>> https://www.geeksforgeeks.org/insertion-and-deletion-in-heaps/
+>> 樹轉二元樹
 3. 井字遊戲AI
 4. A*
