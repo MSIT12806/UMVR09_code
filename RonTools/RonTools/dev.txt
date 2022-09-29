@@ -10,8 +10,19 @@ GameAI 開發文件
 重構聊天室
 
 Unity
+課程
+ 烘培
+ Animation
+ 特效
+ Script
+ Input
+ UGUI
 整理套件
  角色移動操控
  攝影機操控
  singleton
  gamemanager
+   獨體模式？
+   註銷物件、生成物件的管理
+   場景切換
+   
