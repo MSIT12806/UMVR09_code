@@ -36,7 +36,7 @@ namespace ConsoleApp1
         public override string ToString()
         {
             return $"({X},{Y})";
-        }
+        }       
     }
     public class AStarNode<T>
     {
@@ -52,19 +52,30 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             // MinimaxSearchCase();
-            Console.WriteLine(GetP(0));
-            Console.WriteLine(GetP(1));
-            Console.WriteLine(GetP(2));
-            Console.WriteLine(GetP(3));
-            Console.WriteLine(GetP(4));
-            Console.WriteLine(GetP(5));
-            Console.WriteLine(GetP(6));
-            int GetP(int tail)
-            {
-                return (int)((tail + 1) / 2) - 1;
+            HeapTreeCase();
+        }
 
+        private static void HeapTreeCase()
+        {
+            RonHeapTree<int> heapTree = new RonHeapTree<int>(CompareAB);
+            heapTree.Add(9);
+            heapTree.Add(5);
+            heapTree.Add(1);
+            heapTree.Add(7);
+            heapTree.Add(5);
+            heapTree.Add(3);
+
+            Console.WriteLine(heapTree.ToString());
+            Console.WriteLine(heapTree.TakeAway());
+            Console.WriteLine(heapTree.ToString());
+
+            //改成最小堆積
+            int CompareAB(int a, int b)
+            {
+                return -a.CompareTo(b);
             }
         }
+
         static void AStarSearchCase()
         {
             //set issue.

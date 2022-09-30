@@ -53,11 +53,16 @@ namespace RonTools.DataStruct
             Value = v;
         }
     }
-    public class RonHeapTree<T> where T : IComparable
+    public class RonHeapTree<T> 
     {
         private List<RonNode<T>> _tree = new List<RonNode<T>>();
         public int Tail { get { return _tree.Count - 1; } }
-        public RonBinraryTreeNode<T> Head;
+        public RonNode<T> Head { get { return _tree[0]; } }
+        private Func<T, T, int> CompareFunc;
+        public RonHeapTree(Func<T, T, int> cf)
+        {
+            CompareFunc = cf;
+        }
         public int Add(T newValue)
         {
             RonNode<T> newNode = new RonNode<T>(newValue);
@@ -69,16 +74,45 @@ namespace RonTools.DataStruct
                 {
                     break;
                 }
-            }            
+            }
             return Tail;
+        }
+        public T GetTop()
+        {
+            return _tree[0].Value;
+        }
+        public T TakeAway()
+        {
+            var r = _tree[0];
+            _tree[0] = _tree[Tail];
+            _tree.RemoveAt(Tail);
+            int doSwapIdx = 0;
+            while (doSwapIdx * 2 + 1 <= Tail)
+            {
+
+                int left = doSwapIdx * 2 + 1;
+                int right = doSwapIdx * 2 + 2;
+                int doSwapIdx2 = CompareFunc(_tree[left].Value, _tree[right].Value) > 0 ? left : right;
+
+                if (CompareFunc(_tree[doSwapIdx].Value, _tree[doSwapIdx2].Value) > 0)
+                {
+                    break;
+                }
+                else
+                {
+                    (_tree[doSwapIdx], _tree[doSwapIdx2]) = (_tree[doSwapIdx2], _tree[doSwapIdx]);//對調
+                    doSwapIdx = doSwapIdx2;
+                }
+            }
+            return r.Value;
         }
         bool Swap(int nowNodeIndex, out int pi)
         {
             var nowNode = _tree[nowNodeIndex];
             (int _pi, RonNode<T> p) = GetParent(nowNodeIndex);
             pi = _pi;
-            if(p == null) return false;
-            int r = nowNode.Value.CompareTo(p.Value);
+            if (p == null) return false;
+            int r = CompareFunc(nowNode.Value, p.Value);
             if (r > 0)
             {
                 _tree[pi] = _tree[nowNodeIndex];
@@ -86,7 +120,7 @@ namespace RonTools.DataStruct
                 return true;
             }
             return false;
-                
+
         }
         public (int index, RonNode<T> item) GetParent(int nodeIndex)
         {
@@ -101,6 +135,14 @@ namespace RonTools.DataStruct
                 return (-1, null);
             }
         }
-
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i <= Tail; i++)
+            {
+                sb.Append(_tree[i].Value.ToString());
+            }
+            return sb.ToString();
+        }
     }
 }
