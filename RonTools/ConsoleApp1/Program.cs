@@ -159,6 +159,10 @@ push Node onto Closed
 }
 }
              */
+
+            /*
+             * 可視點優化？
+             */
             throw new NotImplementedException();
         }
 
