@@ -53,7 +53,7 @@ namespace RonTools.DataStruct
             Value = v;
         }
     }
-    public class RonHeapTree<T> 
+    public class RonHeapTree<T>
     {
         private List<RonNode<T>> _tree = new List<RonNode<T>>();
         public int Tail { get { return _tree.Count - 1; } }
@@ -67,32 +67,36 @@ namespace RonTools.DataStruct
         {
             RonNode<T> newNode = new RonNode<T>(newValue);
             _tree.Add(newNode);
-            int doSwapIdx = Tail;
-            while (true)
-            {
-                if (!Swap(doSwapIdx, out doSwapIdx))
-                {
-                    break;
-                }
-            }
+            BubbleUp();
             return Tail;
         }
         public T GetTop()
         {
             return _tree[0].Value;
         }
-        public T TakeAway()
+        public T TakeAway(int idx = 0)
         {
-            var r = _tree[0];
-            _tree[0] = _tree[Tail];
+            var r = _tree[idx];
+            _tree[idx] = _tree[Tail];
             _tree.RemoveAt(Tail);
-            int doSwapIdx = 0;
+            BubbleDown(idx);
+            return r.Value;
+        }
+
+        private void BubbleDown(int idx = 0)
+        {
+            int doSwapIdx = idx;
             while (doSwapIdx * 2 + 1 <= Tail)
             {
 
                 int left = doSwapIdx * 2 + 1;
                 int right = doSwapIdx * 2 + 2;
-                int doSwapIdx2 = CompareFunc(_tree[left].Value, _tree[right].Value) > 0 ? left : right;
+                // get win child
+                int doSwapIdx2 = -1;
+                if (right > Tail)
+                    doSwapIdx2 = left;
+                else
+                    doSwapIdx2 = CompareFunc(_tree[left].Value, _tree[right].Value) > 0 ? left : right;
 
                 if (CompareFunc(_tree[doSwapIdx].Value, _tree[doSwapIdx2].Value) > 0)
                 {
@@ -104,8 +108,39 @@ namespace RonTools.DataStruct
                     doSwapIdx = doSwapIdx2;
                 }
             }
-            return r.Value;
         }
+        private void BubbleUp(int idx = -1)
+        {
+            //如果Tail 是偶數 => 滿葉樹，先比手足、再比爸爸；是奇數 => 不滿葉樹，只要比爸爸。
+            bool isEven = Tail % 2 == 0;
+            int doSwapIdx = idx == -1 ? Tail : idx;
+            while (doSwapIdx != 0)
+            {
+                int father = (doSwapIdx - 1) / 2;//取整數
+                int left = father * 2 + 1;
+                int right = father * 2 + 2;
+                
+                // get win child
+                int child = -1;
+                if (right > Tail)
+                    child = left;
+                else
+                    child = CompareFunc(_tree[left].Value, _tree[right].Value) > 0 ? left : right;
+
+
+                if (CompareFunc(_tree[father].Value, _tree[child].Value) > 0)
+                {
+                    break;
+                }
+                else
+                {
+                    (_tree[father], _tree[child]) = (_tree[child], _tree[father]);//對調
+                }
+
+                doSwapIdx = father;
+            }
+        }
+
         bool Swap(int nowNodeIndex, out int pi)
         {
             var nowNode = _tree[nowNodeIndex];
@@ -135,12 +170,27 @@ namespace RonTools.DataStruct
                 return (-1, null);
             }
         }
+        public bool FindAndTakeAway(T v, out T o)
+        {
+            o = default(T);
+            for (int i = 0; i < _tree.Count; i++)
+            {
+                var item = _tree[i];
+                if (item.Value.Equals(v))
+                {
+                    o = TakeAway(i);
+                    return true;
+                }
+            }
+            return false;
+        }
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i <= Tail; i++)
             {
                 sb.Append(_tree[i].Value.ToString());
+                if (i != Tail) sb.Append(", ");
             }
             return sb.ToString();
         }
