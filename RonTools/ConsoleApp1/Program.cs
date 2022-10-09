@@ -18,7 +18,19 @@ namespace ConsoleApp1
             this.X = x;
             this.Y = y;
         }
+        public IEnumerable<Coordinate> GetNeighbor()
+        {
+            var l = new List<Coordinate>();
+            for (int i = X - 1; i <= X + 1; i++)
+            {
+                for (int j = Y - 1; j < Y + 1; j++)
+                {
+                    l.Add(new Coordinate(i, j));
+                }
+            }
 
+            return l;
+        }
         public float GetDistance(Coordinate point)
         {
             var dX = point.X - this.X;
@@ -33,19 +45,33 @@ namespace ConsoleApp1
             else
                 return ((Coordinate)obj).X == this.X && ((Coordinate)obj).Y == this.Y;
         }
+        public static bool operator ==(Coordinate a, Coordinate b)
+        {
+            return a.Equals(b);
+        }
+        public static bool operator !=(Coordinate a, Coordinate b)
+        {
+            return !a.Equals(b);
+        }
         public override string ToString()
         {
             return $"({X},{Y})";
-        }       
+        }
     }
     public class AStarNode<T>
     {
         public T Location;
-        public T Parent;
+        public AStarNode<T> Parent;
         public float CostFromStart;
         public float CostToGoal;
         public float TotalCost;
-
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != typeof(AStarNode<T>))
+                return base.Equals(obj);
+            else
+                return ((AStarNode<T>)obj).Location.Equals(this.Location);
+        }
     }
     class Program
     {
@@ -64,15 +90,18 @@ namespace ConsoleApp1
             heapTree.Add(7);
             heapTree.Add(5);
             heapTree.Add(3);
+            heapTree.Add(10);
 
-            Console.WriteLine(heapTree.ToString());
-            Console.WriteLine(heapTree.TakeAway());
-            Console.WriteLine(heapTree.ToString());
+            Console.WriteLine(heapTree.ToString());//10, 7, 9, 5, 5, 1, 3 :: 1, 5, 3, 9, 7, 5, 10
+            Console.WriteLine(heapTree.TakeAway());//10 :: 1
+            Console.WriteLine(heapTree.ToString());//9, 7, 3, 5, 5, 1 :: 3, 5, 5, 9, 7, 10
+            Console.WriteLine(heapTree.TakeAway(1));//7 :: 5
+            Console.WriteLine(heapTree.ToString());//9, 5, 3, 5, 1 :: 3, 7, 5, 9, 10
 
             //改成最小堆積
             int CompareAB(int a, int b)
             {
-                return -a.CompareTo(b);
+                return a.CompareTo(b);
             }
         }
 
@@ -105,13 +134,14 @@ namespace ConsoleApp1
             var st = AStarSearch(starPoint, goal, canGo, calculateWeight);
 
         }
-
-        private static object AStarSearch(Coordinate starPoint, Coordinate goal, Func<Coordinate, bool> canGo, Func<Coordinate, float> calculateWeight)
+        // AStarSearch(location StartLoc, location GoalLoc, agenttype Agent)
+        private static AStarNode<Coordinate> AStarSearch(Coordinate starPoint, Coordinate goal, Func<Coordinate, bool> canGo, Func<Coordinate, float> calculateWeight)
         {
+            //clear Open & Closed
+            var open = new RonHeapTree<AStarNode<Coordinate>>((a, b) => a.TotalCost < b.TotalCost ? 1 : -1); //get minimum heap tree
+            var closed = new List<AStarNode<Coordinate>>();
+
             /*
- AStarSearch( location StartLoc, location GoalLoc, agenttype Agent)
-{
-clear Open & Closed
 // initialize a start node
 StartNode.Loc = StartLoc;
 StartNode.CostFromStart = 0;
@@ -119,47 +149,84 @@ StartNode.CostToGoal = PathCostEstimate(StartLoc, GoalLoc, Agent);
 StartNode.TotalCost = StartNode.CostToGoal ;
 StartNode.Parent = NULL;
 push StartNode on Open;
+            */
+            AStarNode<Coordinate> startNode = new AStarNode<Coordinate>();
+            startNode.Location = starPoint;
+            startNode.CostFromStart = startNode.Location.GetDistance(starPoint);//0;
+            startNode.CostToGoal = startNode.Location.GetDistance(goal);
+            startNode.TotalCost = startNode.CostFromStart + startNode.CostToGoal;
+            open.Add(startNode);
+
+            /*
 
 // process the list until success or failure
 while Open is not empty {
-pop Node from Open // Node has the lowest TotalCost... TRY HEAP TREE!!
-
- // if at a goal, we’re done
-if (Node is a goal node) {
-construct a path backward from Node to StartLoc
-return SUCCESS;
-}
-else {
-for each successor NewNode of Node {
-NewCost = Node.CostFromStart + TraverseCost(Node, NewNode, Agent);
-
-// ignore this node if exists and no improvement
-if (NewNode is in Open or Closed) and
-(NewNode.CostFromStart <= NewCost) {
-continue;
-}
-else { // store the new or improved information
-NewNode.Parent = Node;
-NewNode.CostFromStart = NewCost;
-NewNode.CostToGoal = PathCostEstimate(NewNode.Loc, GoalLoc, Agent);
-NewNode.TotalCost = NewNode.CostFromStart + NewNode.CostToGoal;
-if (NewNode is in Closed) {
-remove NewNode from Closed
-}
-if (NewNode is in Open) {
-adjust NewNode’s position in Open
-}
-else {
-Push NewNode onto Open
-}
-}
-}
-}
-push Node onto Closed
-}
+  pop Node from Open // Node has the lowest TotalCost... TRY HEAP TREE!!
+  
+   // if at a goal, we’re done
+  if (Node is a goal node) {
+    construct a path backward from Node to StartLoc
+    return SUCCESS;
+  }
+  else {
+    for each successor NewNode of Node {
+      NewCost = Node.CostFromStart + TraverseCost(Node, NewNode, Agent);
+      
+      // ignore this node if exists and no improvement
+      if (NewNode is in Open or Closed) and (NewNode.CostFromStart <= NewCost) {
+        continue;
+      }
+      else { // store the new or improved information
+        NewNode.Parent = Node;
+        NewNode.CostFromStart = NewCost;
+        NewNode.CostToGoal = PathCostEstimate(NewNode.Loc, GoalLoc, Agent);
+        NewNode.TotalCost = NewNode.CostFromStart + NewNode.CostToGoal;
+        if (NewNode is in Closed) {
+          remove NewNode from Closed
+        }
+        if (NewNode is in Open) {
+          adjust NewNode’s position in Open
+        }
+        else {
+          Push NewNode onto Open
+        }
+      }
+    }
+    push Node onto Closed
+  }
 }
              */
-            throw new NotImplementedException();
+
+            while (open.Tail > 0)
+            {
+                var nowNode = open.TakeAway(); // Node has the lowest TotalCost
+                if (nowNode.Location == goal) return nowNode; //construct a path backward from Node to StartLoc
+
+                var neighbours = nowNode.Location.GetNeighbor();
+                foreach (var newPosition in neighbours)
+                {
+                    var newCost = nowNode.CostFromStart + newPosition.GetDistance(nowNode.Location);//calculate new position cost from start.
+                    var newNode = new AStarNode<Coordinate>();
+                    newNode.Location = newPosition;
+                    AStarNode<Coordinate> newNodeHasOldRecord = closed.Find(i => i.Location == newNode.Location);
+                    bool newNodeIsInClosed = newNodeHasOldRecord != null;
+                    bool newNodeIsInOped = open.FindAndTakeAway(newNode, out newNodeHasOldRecord);
+                    if ((newNodeIsInOped || newNodeIsInClosed) && newNodeHasOldRecord.CostFromStart <= newCost) continue;
+                    else
+                    {
+                        newNode.Parent = nowNode;
+                        newNode.CostFromStart = newCost;
+                        newNode.CostToGoal = newNode.Location.GetDistance(goal);
+                        newNode.TotalCost = newNode.CostFromStart + newNode.CostToGoal;
+
+                        if (newNodeIsInClosed) closed.Remove(newNodeHasOldRecord);
+                        else if(newNodeIsInOped) open.Add(newNode); //adjust NewNode’s position in Open
+                        else open.Add(newNode); //Push NewNode onto Open
+                    }
+                }
+                closed.Add(nowNode);
+            }
+            return null; //return fail.
         }
 
         static void DepthFirstSearchCase()
