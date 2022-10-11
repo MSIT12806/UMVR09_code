@@ -3,7 +3,6 @@ using RonTools.DataStruct;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -23,9 +22,10 @@ namespace ConsoleApp1
             var l = new List<Coordinate>();
             for (int i = X - 1; i <= X + 1; i++)
             {
-                for (int j = Y - 1; j < Y + 1; j++)
+                for (int j = Y - 1; j <= Y + 1; j++)
                 {
-                    l.Add(new Coordinate(i, j));
+                    if (i != X || j != Y)
+                        l.Add(new Coordinate(i, j));
                 }
             }
 
@@ -58,27 +58,13 @@ namespace ConsoleApp1
             return $"({X},{Y})";
         }
     }
-    public class AStarNode<T>
-    {
-        public T Location;
-        public AStarNode<T> Parent;
-        public float CostFromStart;
-        public float CostToGoal;
-        public float TotalCost;
-        public override bool Equals(object obj)
-        {
-            if (obj.GetType() != typeof(AStarNode<T>))
-                return base.Equals(obj);
-            else
-                return ((AStarNode<T>)obj).Location.Equals(this.Location);
-        }
-    }
     class Program
     {
         static void Main(string[] args)
         {
             // MinimaxSearchCase();
-            HeapTreeCase();
+            AStarSearchCase(); //(6,6), (5,6), (4,5), (3,5), (2,4), (2,3),
+            //(6,6), (5,6), (4,5), (3,4), (2,3),
         }
 
         private static void HeapTreeCase()
@@ -129,104 +115,16 @@ namespace ConsoleApp1
             };
             var starPoint = new Coordinate(2, 3);
             var goal = new Coordinate(6, 6);
-            Func<Coordinate, bool> canGo = (p) => !Obstacle.Contains(p);
-            Func<Coordinate, float> calculateWeight = (p) => p.GetDistance(goal);
-            var st = AStarSearch(starPoint, goal, canGo, calculateWeight);
-
-        }
-        // AStarSearch(location StartLoc, location GoalLoc, agenttype Agent)
-        private static AStarNode<Coordinate> AStarSearch(Coordinate starPoint, Coordinate goal, Func<Coordinate, bool> canGo, Func<Coordinate, float> calculateWeight)
-        {
-            //clear Open & Closed
-            var open = new RonHeapTree<AStarNode<Coordinate>>((a, b) => a.TotalCost < b.TotalCost ? 1 : -1); //get minimum heap tree
-            var closed = new List<AStarNode<Coordinate>>();
-
-            /*
-// initialize a start node
-StartNode.Loc = StartLoc;
-StartNode.CostFromStart = 0;
-StartNode.CostToGoal = PathCostEstimate(StartLoc, GoalLoc, Agent);
-StartNode.TotalCost = StartNode.CostToGoal ;
-StartNode.Parent = NULL;
-push StartNode on Open;
-            */
-            AStarNode<Coordinate> startNode = new AStarNode<Coordinate>();
-            startNode.Location = starPoint;
-            startNode.CostFromStart = startNode.Location.GetDistance(starPoint);//0;
-            startNode.CostToGoal = startNode.Location.GetDistance(goal);
-            startNode.TotalCost = startNode.CostFromStart + startNode.CostToGoal;
-            open.Add(startNode);
-
-            /*
-
-// process the list until success or failure
-while Open is not empty {
-  pop Node from Open // Node has the lowest TotalCost... TRY HEAP TREE!!
-  
-   // if at a goal, we’re done
-  if (Node is a goal node) {
-    construct a path backward from Node to StartLoc
-    return SUCCESS;
-  }
-  else {
-    for each successor NewNode of Node {
-      NewCost = Node.CostFromStart + TraverseCost(Node, NewNode, Agent);
-      
-      // ignore this node if exists and no improvement
-      if (NewNode is in Open or Closed) and (NewNode.CostFromStart <= NewCost) {
-        continue;
-      }
-      else { // store the new or improved information
-        NewNode.Parent = Node;
-        NewNode.CostFromStart = NewCost;
-        NewNode.CostToGoal = PathCostEstimate(NewNode.Loc, GoalLoc, Agent);
-        NewNode.TotalCost = NewNode.CostFromStart + NewNode.CostToGoal;
-        if (NewNode is in Closed) {
-          remove NewNode from Closed
-        }
-        if (NewNode is in Open) {
-          adjust NewNode’s position in Open
-        }
-        else {
-          Push NewNode onto Open
-        }
-      }
-    }
-    push Node onto Closed
-  }
-}
-             */
-
-            while (open.Tail > 0)
+            Func<Coordinate, Coordinate, float> calculateWeight = (p, g) =>
             {
-                var nowNode = open.TakeAway(); // Node has the lowest TotalCost
-                if (nowNode.Location == goal) return nowNode; //construct a path backward from Node to StartLoc
-
-                var neighbours = nowNode.Location.GetNeighbor();
-                foreach (var newPosition in neighbours)
-                {
-                    var newCost = nowNode.CostFromStart + newPosition.GetDistance(nowNode.Location);//calculate new position cost from start.
-                    var newNode = new AStarNode<Coordinate>();
-                    newNode.Location = newPosition;
-                    AStarNode<Coordinate> newNodeHasOldRecord = closed.Find(i => i.Location == newNode.Location);
-                    bool newNodeIsInClosed = newNodeHasOldRecord != null;
-                    bool newNodeIsInOped = open.FindAndTakeAway(newNode, out newNodeHasOldRecord);
-                    if ((newNodeIsInOped || newNodeIsInClosed) && newNodeHasOldRecord.CostFromStart <= newCost) continue;
-                    else
-                    {
-                        newNode.Parent = nowNode;
-                        newNode.CostFromStart = newCost;
-                        newNode.CostToGoal = newNode.Location.GetDistance(goal);
-                        newNode.TotalCost = newNode.CostFromStart + newNode.CostToGoal;
-
-                        if (newNodeIsInClosed) closed.Remove(newNodeHasOldRecord);
-                        else if(newNodeIsInOped) open.Add(newNode); //adjust NewNode’s position in Open
-                        else open.Add(newNode); //Push NewNode onto Open
-                    }
-                }
-                closed.Add(nowNode);
-            }
-            return null; //return fail.
+                if (Obstacle.Contains(p) || Obstacle.Contains(g))
+                    return float.MaxValue;
+                else
+                    return p.GetDistance(g);
+            };
+            Func<Coordinate, IEnumerable<Coordinate>> getSuccessor = (p) => p.GetNeighbor();
+            var st = AStarNode<Coordinate>.AStarSearch(starPoint, goal, calculateWeight, getSuccessor);
+            Console.WriteLine(st.ToString());
         }
 
         static void DepthFirstSearchCase()
