@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practice2019", "..\Practice
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonReflectionTools", "RonReflectionTools\RonReflectionTools.csproj", "{E97504C0-F0F1-475B-9C8F-13117E6FA820}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE3B4B6C-4ADC-4D72-A0E6-D5975EE7825A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E97504C0-F0F1-475B-9C8F-13117E6FA820}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E97504C0-F0F1-475B-9C8F-13117E6FA820}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E97504C0-F0F1-475B-9C8F-13117E6FA820}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E97504C0-F0F1-475B-9C8F-13117E6FA820}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
