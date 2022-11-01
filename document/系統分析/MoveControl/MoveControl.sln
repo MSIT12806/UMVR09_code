@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveControl", "MoveControl\MoveControl.csproj", "{B98D5BF7-1703-4AE0-84E2-04ECB92BF29A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B98D5BF7-1703-4AE0-84E2-04ECB92BF29A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B98D5BF7-1703-4AE0-84E2-04ECB92BF29A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B98D5BF7-1703-4AE0-84E2-04ECB92BF29A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B98D5BF7-1703-4AE0-84E2-04ECB92BF29A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {62FA7488-91C4-4600-939D-2E45D85E14CD}
+	EndGlobalSection
+EndGlobal
