@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ItemSystem
 {
-    class ItemValue
+    public class ItemValue
     {
         public string name;
         public int id;
@@ -17,16 +17,16 @@ namespace ItemSystem
         public int slots;
     }
 
+    public class Deco
+    {
+        public ItemValue valueId;
+        public Deco deco;
+    }
     class Item
     {
         public int id;
         public ItemValue itemValue;
         public int slots;
-        public class Deco
-        {
-            public ItemValue valueId;
-            public Deco deco;
-        }
         public Deco deco = null;
         public void InjectDeco(ItemValue id)
         {
